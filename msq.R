@@ -1,8 +1,8 @@
-#First shiny mosquito try 1
+#prueba 2  pal shyny
 
 install.packages('shiny')
 library(shiny)
-runApp('shiny_msq')
+runApp('shiny_Example')
 
 library(reshape)
 
