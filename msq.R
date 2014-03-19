@@ -2,13 +2,13 @@
 
 install.packages('shiny')
 library(shiny)
-runApp('shiny_Example')
+runApp('shiny_msq')
 
 library(reshape)
 
 #  msq 
 
-msq <- read.csv('data/msqdata.csv', header=T)
+msq <- read.csv('shiny_msq/msqdata.csv', header=T)
 
 msq.long <- melt(msq[,1:38], id.vars=c('site', 'year') )
 colnames(msq.long)[3:4] <- c('specie', 'count')
