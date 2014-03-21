@@ -3,6 +3,7 @@
 install.packages('shiny')
 library(shiny)
 runApp('shiny_msq')
+runApp('shiny_example')
 
 library(reshape)
 
