@@ -1,4 +1,4 @@
-#First shiny mosquito try 1
+#prueba 2  pal shyny
 
 install.packages('shiny')
 library(shiny)
@@ -9,11 +9,21 @@ library(reshape)
 
 #  msq 
 
-msq <- read.csv('data/msqdata.csv', header=T)
+msq<- read.csv('shiny_msq/msqdata.csv', header=T)
 
-msq.long <- melt(msq[,1:38], id.vars=c('site', 'year') )
-colnames(msq.long)[3:4] <- c('specie', 'count')
+
+msq.long.aux <- melt(msq[,1:38], id.vars=c('site', 'year') )
+colnames(msq.long.aux)[3:4] <- c('specie', 'count')
+
+msq.long<-ddply(.data=msq.long.aux,.variables=c('site','year'),function(x) cbind(x,prop.spst=x$count/sum(x$count)))
 write.csv(msq.long, file='shiny_msq/msq_long.csv', row.names=FALSE)
+
+#data in proporton 
+
+
+
+
+
 
 
 
