@@ -1,0 +1,24 @@
+Shine Mosquitos, shine !!
+========================================================
+
+Iowa State University Medical Entomology Laboratory and Iowa Department of Public Health and the University Hygienic Lab (Iowa City, IA), monitors mosquito populations and mosquito-borne disease in the State of Iowa. 
+
+- Data: 
+This mosquito surveillance program is running since late 1960's and provide information on mosquito population dynamics. The data consist on the weakly counts for almost 40 different species of mosquito on multiples site across the state of IOWA. 
+
+- Project Goals
+The main objective for our project is to develop a web application to help entomologist to visualize, summarize and analyze the data produced by the surveillance program. We will use shiny tools to do this. 
+
+As example, we plot the yearly counts for the most abundant mosquito specie in Iowa, the Aedes Vexans, on the 8 sites across the state. We can see difference along the years, probably due to climate variables such as precipitation. Also there is a spatial pattern, there are sites whre this species is much mor abundant than other sites. 
+
+```{r fig.width=7, fig.height=6}
+library(ggplot2)
+msq <- read.csv('data/msqdata.csv', header=T)
+qplot(data=msq, x=year, y=Aedes.vexans,size=I(1))+geom_line()+facet_wrap(facets=~site, ncol=4)
+```
+
+Currently, this data are available on a ISU web site. This website was assembled and constructed by members of the Bioinformatics and Computational Biology Laboratory (BCBLab) at ISU.  
+
+
+
+
