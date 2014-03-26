@@ -17,7 +17,7 @@ msq <- read.csv('shiny_msq/msqdata.csv', header=T)
 qplot(data=msq, x=year, y=Aedes.vexans,size=I(1))+geom_line()+facet_wrap(facets=~site, ncol=4)
 ```
 
-Currently, this data are available on a ISU web site. This website was assembled and constructed by members of the Bioinformatics and Computational Biology Laboratory (BCBLab) at ISU http://mosquito.ent.iastate.edu/.  
+Currently, this data are available on a ISU web site. This website was assembled and constructed by members of the Bioinformatics and Computational Biology Laboratory (BCBLab) at ISU http://mosquito.ent.iastate.edu/. We will get the information directly from (BCBLab).
 
 
 
