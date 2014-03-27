@@ -23,7 +23,8 @@ shinyUI(bootstrapPage(
   
   mainPanel(
     tabsetPanel(
-      tabPanel("Average", plotOutput("plot1"))    )
-  )
+      tabPanel("Average", plotOutput("plot1")),    
+    tabPanel("HOLA", plotOutput("plot2"))    )
+    )
   
 ))

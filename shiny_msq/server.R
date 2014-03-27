@@ -14,7 +14,11 @@ shinyServer(
   output$plot1 <- reactivePlot(function() {    
     print( ggplot(data=d(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_grid(facets=specie~site, scales='free')
       )
-    # print(qplot(data=d(), x=year,y=count,color=site,facet=site~.))
+  })
     
-    })
+  output$plot2 <- reactivePlot(function() {    
+    print( ggplot(data=d(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_grid(facets=specie~site, scales='free')
+    )
+  })
+  
 })
