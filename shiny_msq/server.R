@@ -26,10 +26,11 @@ shinyServer(
     d2 <- reactive( { subset(msq.ia, specie %in% input$specie) } )
   
   output$plot1 <- reactivePlot(function() {    
-    print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_grid(facets=specie~site, scales='free')
+    print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
       )
   })
-    
+  output$cap1<-renderText({'description of plot'}) 
+  
   output$plot2 <- reactivePlot(function() {        
   p <- ggplot(data=d2(),aes(long,lat))+facet_wrap(~specie) + geom_polygon(aes(group=group, order=order, fill=prop.spst) ) 
   print(p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + scale_fill_gradient2( low='black', high='red', midpoint=0.05) )
