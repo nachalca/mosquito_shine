@@ -6,10 +6,12 @@ runApp('shiny_msq')
 runApp('shiny_example')
 
 library(reshape)
-
+library(plyr)
 #  msq 
 
 msq<- read.csv('shiny_msq/msqdata.csv', header=T)
+msq.long$subregion <- msq.long$site
+levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
 
 
 msq.long.aux <- melt(msq[,1:38], id.vars=c('site', 'year') )
@@ -20,15 +22,33 @@ write.csv(msq.long, file='shiny_msq/msq_long.csv', row.names=FALSE)
 
 #data in proporton 
 
+library(maps)
+library(ggplot2)
+
+ia.c <- map_data('county', 'iowa')
+ia.s <- map_data('state')
+
+
+ia2 <- subset(ia.c, subregion %in% unique(msq$subregion) )
+msq.ia <- merge(msq.long,ia2, by= 'subregion')
+
+
+m <- mean(msq$Culex.pipiens.group)
+
+msq.ia2 <- subset(msq.ia, specie %in% c('Culex.pipiens.group', 'Aedes.dorsalis'))
+ggplot(data=msq.ia2 ,aes(long,lat)) +facet_wrap(~specie) + geom_polygon(aes(group=group, order=order, fill=prop.sps) ) +
+geom_path(data=ia.s, aes(x=long, y=lat, group=group) )
+  
+
+
+geom_point(data=ia3, aes(long,lat,color=Culex.pipiens.group ))
+geom_polygon(data=ia3, aes(group=group, order=order, fill=Culex.pipiens.group) ) +
+scale_fill_gradient2( low='black', high='red', midpoint=m)
 
 
 
 
-
-
-
-
-library(shiny)
+dlibrary(shiny)
 library(ggplot2)
 
 
