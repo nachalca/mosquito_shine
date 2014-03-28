@@ -8,7 +8,7 @@ shinyUI(fluidPage(
   
   fluidRow(
   sidebarLayout(
-  sidebarPanel( 
+  sidebarPanel(width=3,
     
     conditionalPanel(condition="input.conditionedPanels==1",
     #checkboxGroupInput(inputId = "specie",
