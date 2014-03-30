@@ -4,19 +4,22 @@ library(shiny)
 cap1<-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
 
 shinyUI(fluidPage(
-  titlePanel("Shine Mosquito !"), 
+  titlePanel("Shine Mosquito shine!"), 
+  
   
   fluidRow(
   sidebarLayout(
+  
   sidebarPanel(width=3,
-    
+              
     conditionalPanel(condition="input.conditionedPanels==1",
-    #checkboxGroupInput(inputId = "specie",
+                     img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300), 
+                     #checkboxGroupInput(inputId = "specie",
      #                   label = "Select specie:",
       #                 choices = levels(msq.long$specie),selected='Aedes.albopictus'),
     selectInput(inputId = "specie",
                         label = "Select specie:",
-                      choices = levels(msq.long$specie),selected='Aedes.albopictus'),
+                      choices = levels(msq.long$specie),selected='Aedes.vexans'),
      
     
     checkboxGroupInput(inputId = "site",
@@ -35,12 +38,11 @@ shinyUI(fluidPage(
   ),
   
   mainPanel(
-  
+    
     tabsetPanel(
-  
-      tabPanel("Average",p(cap1), plotOutput("plot1"),value=1),    
+          tabPanel("Average",p(cap1), plotOutput("plot1"),value=1),    
     tabPanel("Location", plotOutput("plot2"),value=2), 
     id="conditionedPanels" )
     )))
-  
+ 
 ))

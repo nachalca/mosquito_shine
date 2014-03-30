@@ -35,5 +35,6 @@ shinyServer(
   p <- ggplot(data=d2(),aes(long,lat))+facet_wrap(~specie) + geom_polygon(aes(group=group, order=order, fill=prop.spst) ) 
   print(p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + scale_fill_gradient2( low='black', high='red', midpoint=0.05) )
   })
+ 
   
 })
