@@ -11,6 +11,7 @@ library(plyr)
 #  msq 
 
 msq<- read.csv('shiny_msq/msqdata.csv', header=T)
+msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 msq.long$subregion <- msq.long$site
 levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
 
