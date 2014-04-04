@@ -37,8 +37,9 @@ shinyServer(
   output$cap1<-renderText({'description of plot'}) 
   
   output$plot2 <- reactivePlot(function() {        
-    
-  p <- ggplot() + geom_polygon(data=d2(), aes(x=long,y=lat,group=group, order=order, fill=((prop.spst-prop.spyr)/prop.spyr) ) ) +
+    ggplot() + geom_polygon(data=ia.c, aes(x=long,y=lat,group=group) )
+  
+    p <- ggplot() + geom_polygon(data=d2(), aes(x=long,y=lat,group=group, order=order, fill=((prop.spst-prop.spyr)/prop.spyr) ) ) +
        theme_bw() + theme(axis.text=element_blank(), axis.title=element_blank(),
                        axis.line=element_blank(),
                        axis.ticks=element_blank(),

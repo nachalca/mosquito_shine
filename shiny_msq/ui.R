@@ -1,4 +1,4 @@
-#msq<- read.csv('shiny_msq/msqdata.csv', header=T)
+
 #msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 msq.long <- read.csv('msq_long.csv', header=T)
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
