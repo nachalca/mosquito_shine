@@ -34,16 +34,26 @@ shinyUI(fluidPage(
                      checkboxGroupInput(inputId = "site3",
                                         label = "Select site:",
                                         choices = levels(msq.long$site),selected='Cfall')
-                          )
+                          ),
 
+          conditionalPanel(condition="input.conditionedPanels==4",
+                           checkboxGroupInput(inputId = "index4",
+                                              label = "Select index:",
+                                              choices = lab.index,selected='Simpson'),
+                           checkboxGroupInput(inputId = "site4",
+                                              label = "Select site:",
+                                              choices = levels(msq.long$site),selected='Cfall')
+          )        
                   ), # close sidebarPanel
   
     mainPanel(
         tabsetPanel(
             tabPanel("Average",p(cap1), plotOutput("plot1"),value=1),    
             tabPanel("Location", plotOutput("plot2"),value=2), 
-            tabPanel("Simpson", plotOutput("plot3"),value=3),
-            id="conditionedPanels" )
+            tabPanel("Indexes", plotOutput("plot3"),value=3),
+            tabPanel("Algo", plotOutput("plot4"),value=4),
+        id="conditionedPanels" )
+        
             ) # close mainPanel
     
           ) # close sidebarLayout
