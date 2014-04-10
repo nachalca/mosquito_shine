@@ -19,6 +19,9 @@ shinyServer(
     # data for plot 3
     d3 <- reactive( { subset( msq.ind.aux, (site %in% input$site3) & (Index%in%input$index)) } )
     
+    # data for plot 4
+    d4 <- reactive( { subset( msq.ind.aux, (site %in% input$site4) & (Index%in%input$index4)) } )
+    
   output$plot1 <- reactivePlot(function() {    
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
       )
@@ -44,5 +47,10 @@ shinyServer(
   )
   })
   
- 
+  output$plot4 <- reactivePlot(function() {    
+    print( ggplot(data=d4(), aes(x=year,y= Index.val))+
+             geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=Index.val), color=I('red'))+facet_grid(facets=Index~site, scales='free')
+    )
+  })
+  
 })
