@@ -44,7 +44,7 @@ qplot(data=subset(mid, mid.comu > .001 & mid.comu<.5),y=nam, x=mid.comu, size=I(
 # We would like to identify whcih year-sites observations are far from the mean comunity structure. So we compute the euclidean distance among all sites with respect to the middle point (euclidean is ok since we are using proportions not the raw counts.). 
 # We plot a estimated density for the distances from the mean in figure \ref{dens}, the estiamted density is clarlly skewed to right. This is telling us that most of the points are arround the mean value (arround a .2 distance from the center) but there are some few year-sites observations appart from the rest. 
 
-d <- density(c(-dist.out[-153,153],dist.out[-153,153]),from=0,bw=.04)
+d <- density(c(-count$dist.out[-153,153],count$dist.out[-153,153]),from=0,bw=.04)
 qplot(x=d$x, y=d$y, geom='line', xlab='Distance', ylab='Density')
 
 qplot(data=count, DegreeDayMinus2,PrecipationMinus2)

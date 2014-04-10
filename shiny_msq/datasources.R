@@ -1,7 +1,12 @@
 
 # In this code we read data set and create the data to make every plot
-# load data sets we use
+# set packages we need
+library(vegan)
+library(ggplot2)
+library(reshape2)
+library(plyr)
 
+# load data sets we use
 msq<- read.csv('msqdata.csv', header=T)
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 msq.long <- read.csv('msq_long.csv', header=T)
@@ -21,4 +26,13 @@ lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon" 
 cap1 <-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
 
 
-#density plot
+#density plot for rare communities id
+msq.sp <- colnames(msq)[-c(1:2, 39:52)]
+env   <- colnames(msq)[c(39:52)]
+# Compute species proportion on each site*year and the mid-community
+prop <- (msq[,msq.sp]) /apply(msq[,msq.sp],1,sum, na.rm=T)
+mid.comu <- apply(prop, 2, mean)
+dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean') ,nrow=161) 
+msq$distout <- dist.out[-161,161]
+
+
