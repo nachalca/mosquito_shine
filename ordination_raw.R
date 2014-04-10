@@ -46,6 +46,9 @@ qplot(data=subset(mid, mid.comu > .001 & mid.comu<.5),y=nam, x=mid.comu, size=I(
 
 d <- density(c(-dist.out[-153,153],dist.out[-153,153]),from=0,bw=.04)
 qplot(x=d$x, y=d$y, geom='line', xlab='Distance', ylab='Density')
+
+qplot(data=count, DegreeDayMinus2,PrecipationMinus2)
+
 #qplot(data=count,x=factor(year),y=distout, geom='boxplot')
 #qplot(data=count,x=factor(site),y=distout, geom='boxplot') + geom_hline(yintercept=q90)
 

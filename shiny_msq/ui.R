@@ -1,16 +1,7 @@
 
 library(shiny)
 library(reshape2)
-
-msq<- read.csv('msqdata.csv', header=T)
-msq.ind.aux <- melt(msq[,c(1,2,40:46)],id.vars=c('site', 'year'))
-colnames(msq.long.aux)[3:4] <- c('Index', 'Index.val')
-lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon"  , "Evenness","AevexansRatio"  )
-msq.long <- read.csv('msq_long.csv', header=T)
-msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
-
-cap1<-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
-
+source('datasources.R')
 shinyUI(fluidPage(
   titlePanel("Shine Mosquito shine!"), 
     fluidRow(
