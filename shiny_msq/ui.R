@@ -1,5 +1,7 @@
-
-#msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
+msq<- read.csv('msqdata.csv', header=T)
+msq.ind.aux <- melt(msq[,c(1,2,40:46)],id.vars=c('site', 'year'))
+colnames(msq.long.aux)[3:4] <- c('Index', 'Index.val')
+lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon"  , "Evenness","AevexansRatio"  )
 msq.long <- read.csv('msq_long.csv', header=T)
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 
@@ -17,7 +19,8 @@ shinyUI(fluidPage(
   sidebarPanel(width=3,
               
     conditionalPanel(condition="input.conditionedPanels==1",
-                     img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300), 
+                     
+                    img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300), 
                      #checkboxGroupInput(inputId = "specie",
      #                   label = "Select specie:",
       #                 choices = levels(msq.long$specie),selected='Aedes.albopictus'),
@@ -25,7 +28,6 @@ shinyUI(fluidPage(
                         label = "Select specie:",
                       choices = levels(msq.long$specie),selected='Aedes.vexans'),
      
-    
     checkboxGroupInput(inputId = "site",
                        label = "Select site:",
                        choices = levels(msq.long$site),selected='Cfall')
@@ -37,17 +39,22 @@ shinyUI(fluidPage(
                                  choices = levels(msq.long$specie),selected='Aedes.vexans')
                      ),
     
+    
     conditionalPanel(condition="input.conditionedPanels==3",
+                     
+                     checkboxGroupInput(inputId = "index",
+                                        label = "Select index:",
+                                        choices = lab.index,selected='Simpson'),
+  
                      checkboxGroupInput(inputId = "site3",
                                         label = "Select site:",
-                                        choices = levels(msq.res$site),selected='Cfall')
+                                        choices = levels(msq.long$site),selected='Cfall')
     
-    
+    )
 
-  )),
+  ),
   
   mainPanel(
-    
     tabsetPanel(
           tabPanel("Average",p(cap1), plotOutput("plot1"),value=1),    
     tabPanel("Location", plotOutput("plot2"),value=2), 
@@ -56,8 +63,9 @@ shinyUI(fluidPage(
        
     
     )
-  
+  )
     )
  
 ))
-)
+
+

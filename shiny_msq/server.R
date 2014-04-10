@@ -14,6 +14,8 @@ shinyServer(
     msq.long$subregion <- msq.long$site
     levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
     msq.spyr <- ddply(.data=msq.long,.variables=c('year','specie'),function(x) data.frame(x , prop.spyr=mean(x$prop.spst)) )
+    msq.ind.aux <- melt(msq[,c(1,2,40:46)],id.vars=c('site', 'year'))
+    colnames(msq.ind.aux)[3:4] <- c('Index', 'Index.val')
     
     ia.c <- map_data('county', 'iowa')
     ia.s <- map_data('state', 'iowa')
@@ -28,7 +30,7 @@ shinyServer(
     d2 <- reactive( { subset(msq.ia, specie %in% input$specie2) } )
   
     # data for plot 3
-    d3 <- reactive( { subset(msq.res, site %in% input$site3) } )
+    d3 <- reactive( { subset( msq.ind.aux, (site %in% input$site3) & (Index%in%input$index)) } )
     
   output$plot1 <- reactivePlot(function() {    
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
@@ -50,8 +52,10 @@ shinyServer(
   })
   
   output$plot3 <- reactivePlot(function() {    
-    print( ggplot(data=d3(), aes(x=year,y= Simpson))+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=Simpson), color=I('red')) +facet_wrap(facets=~site, scales='free')
-    )
+    print( ggplot(data=d3(), aes(x=year,y= Index.val))+
+             geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=Index.val), color=I('red'))+facet_grid(facets=Index~site, scales='free')
+  )
   })
   
+ 
 })
