@@ -21,8 +21,9 @@ shinyServer(
     
     # data for plot 4
     d4.1 <- reactive( { quantile(msq$distout, probs=input$q/100)} )
-    d4.2 <- reactive({msq[,c(input$index.X,input$index.Y)]})
-    reactive({colnames(d4.2()) <- c('x','y')   })  
+    d4.2 <- reactive({ data.frame(lax = msq[,input$index.X], lay=msq[,input$index.Y],rare=as.factor( msq$distout > d4.1() ) ) })
+    #d4.2 <- reactive({ msq[,c(input$index.X,input$index.Y)] })
+    #d4.3 <- reactive({ rare = as.numeric( msq$distout > d4.1() )   })
 #==============================================
   output$plot1 <- reactivePlot(function() {    
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
@@ -55,9 +56,14 @@ shinyServer(
   
     })
   
-  output$plot4.2 <- reactivePlot(function() {    
-    print( qplot(data=d4.2(),x=x, y=y))
-    
-  })
+#     output$tab4.2=renderDataTable({
+#       summary(d4.2())  
+#       })
+    output$plot4.2 <- renderPlot({
+      print( qplot(data=d4.2(), lax,lay, color=rare))
+        #par(mar = c(5.1, 4.1, 0, 1))
+        #plot(d4.2(), col = d4.3()$rare,pch = 20, cex = 3)
+    })
+
   
 })

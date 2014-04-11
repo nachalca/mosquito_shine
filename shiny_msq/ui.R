@@ -22,12 +22,14 @@ shinyUI(fluidPage(
                           ),
     
           conditionalPanel(condition="input.conditionedPanels==2",
+                           img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300),                            
                      checkboxGroupInput(inputId = "specie2",
                                  label = "Select specie:",
                                  choices = levels(msq.long$specie),selected='Aedes.vexans')
                           ),
     
           conditionalPanel(condition="input.conditionedPanels==3",
+                           img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300),                            
                      checkboxGroupInput(inputId = "index",
                                         label = "Select index:",
                                         choices = lab.index,selected='Simpson'),
@@ -37,6 +39,7 @@ shinyUI(fluidPage(
                           ),
 
           conditionalPanel(condition="input.conditionedPanels==4",
+                           img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300), 
                            sliderInput("q", "Quantile", 
                                        min=0, max=100, value=90,step=1),
             selectInput(inputId = "index.X",
@@ -56,7 +59,8 @@ shinyUI(fluidPage(
             tabPanel("Location", plotOutput("plot2"),value=2), 
             tabPanel("Indexes", plotOutput("plot3"),value=3),
             tabPanel("Algo", plotOutput("plot4.1"),plotOutput("plot4.2"),value=4),
-          id="conditionedPanels" )
+            #tabPanel("Algo", plotOutput("plot4.1"),dataTableOutput("tab4.2"),value=4),
+            id="conditionedPanels" )
         
             ) # close mainPanel
     
