@@ -26,6 +26,8 @@ msq.ia <- merge(msq.spyr,ia2, by= 'subregion')
 lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon"  , "Evenness","AevexansRatio","DegreeDayExact",
 "PrecipationExact" ,"DegreeDayMinus2","PrecipationMinus2")
 cap1 <-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
+cap4 <-'The right panel show the density of the distantce to the mean community, the red line es the quatile.
+        In left panel each point is a site-year and the red ones are the extreme communities.'
 
 
 #density plot for rare communities id
@@ -41,7 +43,7 @@ dat.den<-density(c(-msq$distout,msq$distout),from=0)
 
 ####New data set with the comlete base
 
-setwd("C:/Users/nachalca/Desktop/eco_mosquito.sql")
-install.packages('RMySQL')
-library(RMySQL)
-dat.huge<-read.table('eco_mosquito.sql')
+# setwd("C:/Users/nachalca/Desktop/eco_mosquito.sql")
+# install.packages('RMySQL')
+# library(RMySQL)
+# dat.huge<-read.table('eco_mosquito.sql')

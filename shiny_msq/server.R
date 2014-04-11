@@ -29,6 +29,11 @@ shinyServer(
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
       )
   })
+  output$tab1<-renderTable({
+    summary(d1())
+
+    })
+
   output$cap1<-renderText({'description of plot'}) 
   
   output$plot2 <- reactivePlot(function() {        

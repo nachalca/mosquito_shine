@@ -55,11 +55,11 @@ shinyUI(fluidPage(
   
     mainPanel(
         tabsetPanel(
-            tabPanel("Average",p(cap1), plotOutput("plot1"),value=1),    
+            tabPanel("Average",p(cap1), plotOutput("plot1"),tableOutput("tab1"),value=1),    
             tabPanel("Location", plotOutput("plot2"),value=2), 
             tabPanel("Indexes", plotOutput("plot3"),value=3),
             #tabPanel("Rare Comunities", plotOutput("plot4.1"),plotOutput("plot4.2"),value=4),
-            tabPanel("Rare Comunities", plotOutput("plot4"),value=4),
+            tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"),value=4),
             id="conditionedPanels" )
         
             ) # close mainPanel
