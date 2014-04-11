@@ -50,24 +50,20 @@ shinyServer(
   )
   })
   
-  output$plot4.1 <- reactivePlot(function() {    
-    print( qplot(x=dat.den$x, y=dat.den$y,geom='line')+geom_vline(xintercept=d4.1(),color=I('red'))
-    )
-  
-    })
-  
-#     output$tab4.2=renderDataTable({
-#       summary(d4.2())  
-#       })
-    output$plot4.2 <- renderPlot({
-      print( qplot(data=d4.2(), lax,lay, color=rare))
-        #par(mar = c(5.1, 4.1, 0, 1))
-        #plot(d4.2(), col = d4.3()$rare,pch = 20, cex = 3)
-    })
-    output$plot5 <- renderPlot({
-        print( grid.arrange( qplot(x=rnorm(40), y=rnorm(40)),qplot(x=rnorm(40), y=rnorm(40)),ncol=2 ) )
-        #par(mar = c(5.1, 4.1, 0, 1))
-        #plot(d4.2(), col = d4.3()$rare,pch = 20, cex = 3)
+#   output$plot4.1 <- reactivePlot(function() {    
+#     print( qplot(x=dat.den$x, y=dat.den$y,geom='line')+geom_vline(xintercept=d4.1(),color=I('red'))
+#     )
+#   
+#     })  
+#     output$plot4.2 <- renderPlot({
+#       print( qplot(data=d4.2(), lax,lay, color=rare))
+#     })
+    output$plot4 <- renderPlot({
+      p1 <- qplot(x=dat.den$x, y=dat.den$y,geom='line',size=I(1.5)) + 
+        geom_vline(xintercept=d4.1(),color=I('red')) + ylab('') + xlab('Distance to Average Community')
+      p2 <- qplot(data=d4.2(), lax,lay, color=rare)  + scale_color_manual(values=c('black', 'red')) +
+            xlab(as.character(input$index.X)) + ylab(as.character(input$index.Y)) + theme(legend.position='bottom')
+        print( grid.arrange( p1, p2 ,ncol=2 ) )
     })
   
 })

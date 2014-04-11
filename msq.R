@@ -17,11 +17,8 @@ levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","wood
 
 msq.long.index<-ddply(.data=msq.long.aux,.variables=c('site','year'),function(x) cbind(x,prop.spst=x$count/sum(x$count)))
 
-
 msq.long.aux <- melt(msq[,1:38], id.vars=c('site', 'year') )
 colnames(msq.long.aux)[3:4] <- c('specie', 'count')
-
-
 
 
 msq.long<-ddply(.data=msq.long.aux,.variables=c('site','year'),function(x) cbind(x,prop.spst=x$count/sum(x$count)))
