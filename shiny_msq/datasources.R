@@ -5,6 +5,7 @@ library(vegan)
 library(ggplot2)
 library(reshape2)
 library(plyr)
+library(gridExtra)
 
 # load data sets we use
 msq<- read.csv('msqdata.csv', header=T)

@@ -64,6 +64,10 @@ shinyServer(
         #par(mar = c(5.1, 4.1, 0, 1))
         #plot(d4.2(), col = d4.3()$rare,pch = 20, cex = 3)
     })
-
+    output$plot5 <- renderPlot({
+        print( grid.arrange( qplot(x=rnorm(40), y=rnorm(40)),qplot(x=rnorm(40), y=rnorm(40)),ncol=2 ) )
+        #par(mar = c(5.1, 4.1, 0, 1))
+        #plot(d4.2(), col = d4.3()$rare,pch = 20, cex = 3)
+    })
   
 })
