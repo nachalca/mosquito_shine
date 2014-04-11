@@ -38,3 +38,10 @@ dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean') ,nrow=161)
 msq$distout <- dist.out[-161,161]
 dat.den<-density(c(-msq$distout,msq$distout),from=0)
 
+
+####New data set with the comlete base
+
+setwd("C:/Users/nachalca/Desktop/eco_mosquito.sql")
+install.packages('RMySQL')
+library(RMySQL)
+dat.huge<-read.table('eco_mosquito.sql')
