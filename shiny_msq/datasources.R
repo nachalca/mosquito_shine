@@ -22,7 +22,8 @@ ia2 <- subset(ia.c, subregion %in% unique(msq.long$subregion) )
 msq.ia <- merge(msq.spyr,ia2, by= 'subregion')
 
 # only for UI
-lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon"  , "Evenness","AevexansRatio"  )
+lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon"  , "Evenness","AevexansRatio","DegreeDayExact",
+"PrecipationExact" ,"DegreeDayMinus2","PrecipationMinus2")
 cap1 <-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
 
 
@@ -34,5 +35,5 @@ prop <- (msq[,msq.sp]) /apply(msq[,msq.sp],1,sum, na.rm=T)
 mid.comu <- apply(prop, 2, mean)
 dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean') ,nrow=161) 
 msq$distout <- dist.out[-161,161]
-
+dat.den<-density(c(-msq$distout,msq$distout),from=0)
 

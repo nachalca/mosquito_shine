@@ -37,12 +37,16 @@ shinyUI(fluidPage(
                           ),
 
           conditionalPanel(condition="input.conditionedPanels==4",
-                           checkboxGroupInput(inputId = "index4",
-                                              label = "Select index:",
-                                              choices = lab.index,selected='Simpson'),
-                           checkboxGroupInput(inputId = "site4",
-                                              label = "Select site:",
-                                              choices = levels(msq.long$site),selected='Cfall')
+                           sliderInput("q", "Quantile", 
+                                       min=0, max=100, value=90,step=1),
+            selectInput(inputId = "index.X",
+                         label = "Select x axis variable",
+                         choices = lab.index,selected='PrecipationExact'),
+                           
+            selectInput(inputId = "index.Y",
+                        label = "Select y axis variable",
+                        choices = lab.index,selected='DegreeDayExact')
+            
           )        
                   ), # close sidebarPanel
   
@@ -51,8 +55,8 @@ shinyUI(fluidPage(
             tabPanel("Average",p(cap1), plotOutput("plot1"),value=1),    
             tabPanel("Location", plotOutput("plot2"),value=2), 
             tabPanel("Indexes", plotOutput("plot3"),value=3),
-            tabPanel("Algo", plotOutput("plot4"),value=4),
-        id="conditionedPanels" )
+            tabPanel("Algo", plotOutput("plot4.1"),plotOutput("plot4.2"),value=4),
+          id="conditionedPanels" )
         
             ) # close mainPanel
     
