@@ -49,12 +49,12 @@ msq$distout <- dist.out[-161,161]
 dat.den<-density(c(-msq$distout,msq$distout),from=0)
 ```
 
-At this point we have written a shiny app based on part of the entire data set, we are using yearly mosquito counts for  8 sites and 20 years of data. However complete data has more sites and years on weakly basis. The shiny app have 4 tabset pannels each of them with a different plot, we describe each tabset with an example. 
+At this point we have written a shiny app based on part of the entire data set, we are using yearly mosquito counts for  8 sites and 20 years of data. However complete data has more sites and years on weakly basis. The shiny app have 4 tabset panels each of them with a different plot, we describe each tabset with an example. 
 
 --------------------------------------------
 - 1) Tabset 1: Individual species description
 --------------------------------------------
-The starting point is a figure for individual species. We can seelct only 1 species for this plot, and multiple sites. The resulting plot shows years in x axis and the mosquito species weight with facets on sites. 
+In the first tabset we present a figure for individual species. In this figure we can select only 1 species at time, and additionally select multiple sites. The information presented in this plot is yearly species proportion  facet per site. In the each plot there are a reference line that represents the mean proportion for each species across sites. 
 
 Choices on shiny: Species (only one) and Sites. 
 
@@ -63,13 +63,13 @@ d <- subset(msq.spyr, (specie == 'Aedes.vexans') & (site == 'Gvalley') )
 ggplot(data=d, aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
 ```
 
-As an example, we show here the proportion of Aedes.Vexan on Green Valley over time, the red line represent the average proportion of this speceis on each year. So on average across all years and sites, this speceis represent arround 75% of the mosquito counts. However on Green Valley the Aedes.Vexan proportion is always below the mean, What happen in Green Valley ? The Vexans don't like it anymore ! 
+As an example, we show here the proportion of Aedes.Vexan on Green Valley over time, the red line represent the average proportion of this species on each year. So on average across all years and sites, this species represent around 75% of the mosquito counts. However on Green Valley the Aedes.Vexan proportion is most of the time below the mean, What happen in Green Valley ? The Vexans don't like it anymore !!!! 
 
 --------------------------------------------
 - 2) Second tabset: Spatial comparison 
 --------------------------------------------
 
-Our second tabset has a map, here we can select multiple species and multiple sites, the idea is to find species that share habitats and other species which are likely to be in different places.
+Our second tabset has a map, here we can select multiple species and multiple sites, the idea is to find species that share habitats and other species which are likely to be in different places. 
 
 ```{rtab2}
 d <- subset(msq.spyr, specie %in% c('Aedes.triseriatus','Culex.pipiens.group'))
@@ -92,9 +92,9 @@ p + geom_point(data=msq.ia, aes(x=long, y=lat, group=group) ) + facet_wrap(~spec
 ```
 
 --------------------------------------------
-- 3) Third tabset: Comunity description
+- 3) Third tabset: Community description
 --------------------------------------------
-One important feature for the entomologist is to study the community characteristics, they are several indices reflecting different aspects of the mosquito commuinity composition. In this plot we can choose multiple indices and multiple sites to plot the yearly value of each index on each site. 
+One important feature for the entomologist is to study the community characteristics, they are several indices reflecting different aspects of the mosquito community composition. In this plot we can choose multiple indices and multiple sites to plot the yearly value of each index on each site. These are community level plots.
 
 ```{rtab3}
 d <- subset( msq.ind.aux, (site %in% c("Gvalley","Union")  ) & (Index%in% c('Simpson', 'SpeciesRichness') ))
@@ -102,19 +102,19 @@ d <- subset( msq.ind.aux, (site %in% c("Gvalley","Union")  ) & (Index%in% c('Sim
              geom_line()+geom_line(aes(x=year,y=Index.val), color=I('red'))+facet_grid(facets=Index~site, scales='free')
 ```
 
-We have choose Green Valley and Union stations with SpeciesRichness and Simpson Index. Both measures are related to the diversity in the community. 
+We have choose Green Valley and Union stations with Species Richness and Simpson Index. Both measures are related to the diversity in the community. 
 
 --------------------------------------------
-- 4) Fourth tabset: Identify extreme comunities
+- 4) Fourth tabset: Identify extreme communities
 --------------------------------------------
 Besides describing each community we may be interesting in comparing them, in particular we want to know if all communities are alike or there are some site-year observations that are different from the rest. 
 
-Working with species proportion within one site and year (instead of total counts) we compute an "average commuinity" wchich simply taking average of each species proportion. 
-Then for each observations we compute the distance respec to that average community. 
+Working with species proportion within one site and year (instead of total counts) we compute an "average community" which simply taking average of each species proportion. 
+Then for each observations we compute the distance respect to that average community. 
 
-We plot a two pannel figure, on the right is the estimated density of the distances to the mid point community. The vertical red line represent the 90 quantile. 
+We plot a two panel figure, on the right is the estimated density of the distances to the mid point community. The vertical red line represent the 90 quantile. 
 
-On the left panel there is a scatter plot of two comunity variables and we colored the points corresponding to communities further from the center community, this is with distance bigger than its 90% quantile. 
+On the left panel there is a scatter plot of two community variables and we colored the points corresponding to communities further from the center community, this is with distance bigger than its 90% quantile. 
 
 ```{rtab4}
 q <- quantile(msq$distout, probs=.9) 
@@ -128,12 +128,12 @@ p2 <- qplot(data=d, lax,lay, color=rare)  + scale_color_manual(values=c('black',
 grid.arrange( p1, p2 ,ncol=2 )                                                                                         
 ```
 
-On the shiny it is posible to choose the quantile that determine wich communities are consider extreme and also the variables plot in the right pannel. In this example the selected quantile is 90% and the variables are Precipitation (horizontal) and Dominance index (vertical). Basically we can see all extreme communities shows big values in Dominance but are not extreme on precipitation. 
+On the shiny it is possible to choose the quantile that determine which communities are consider extreme and also the variables plot in the right panel. In this example the selected quantile is 90% and the variables are Precipitation (horizontal) and Dominance index (vertical). Basically we can see all extreme communities shows big values in Dominance but are not extreme on precipitation. 
 
 - Next Steps
 ------------
 
-We have just got the complete data set, with more than 30 sites over 15 iowa counties (instead of 8 sites on 4 counties), and data back to 70's (not all years for every site). So probably next week will be the data procesing steps (cleaning and summarizing) with no much advance on shiny. 
+We have just got the complete data set, with more than 30 sites over 15 Iowa counties (instead of 8 sites on 4 counties), and data back to 70's (not all years for every site). So probably next week will be the data processing steps (cleaning and summarizing) with no much advance on shiny. 
 
-On the application aspeces, we may include more tools to measure discantes among communities, as an MDS analysis of community distance matrix using {\tt vegan} package.
+On the application aspects, we may include more tools to measure distances among communities, as an MDS analysis of community distance matrix using {\tt vegan} package.
 
