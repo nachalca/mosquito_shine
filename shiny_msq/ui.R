@@ -2,7 +2,7 @@
 library(shiny)
 library(reshape2)
 source('datasources.R')
-shinyUI(fluidPage(
+shinyUI(bootstrapPage(
   titlePanel("Shine Mosquito shine!"), 
     fluidRow(
       sidebarLayout(
