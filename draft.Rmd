@@ -5,6 +5,13 @@ Iowa State University Medical Entomology Laboratory and Iowa Department of Publi
 
 We will use shiny package to develop a web application to help entomologist to visualize, summarize and analyze the data produced by the surveillance program.
 
+How to run the shiny direct from GitHub:
+* go to https://github.com/nachalca/mosquito_shine
+* download the file 'shiny_msq'
+* change your directory where is the 'shiny_msq' file
+* finally runApp('shiny_msq')
+
+
 ```{rpack, echo=FALSE, message=FALSE,warning=FALSE}
 library(vegan)
 library(ggplot2)
