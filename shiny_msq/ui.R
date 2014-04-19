@@ -64,7 +64,7 @@ shinyUI(bootstrapPage(
             tabPanel("Indexes", plotOutput("plot3"),value=3),
             #tabPanel("Rare Comunities", plotOutput("plot4.1"),plotOutput("plot4.2"),value=4),
             tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"),value=4),
-              tabPanel("MDS",p(cap1), plotOutput("plot5"),value=5),
+              tabPanel("MDS",p(cap5), plotOutput("plot5"),value=5),
             id="conditionedPanels" )
         
             ) # close mainPanel

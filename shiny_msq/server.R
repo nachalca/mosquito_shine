@@ -5,6 +5,8 @@ library(plyr)
 library(maps)
 library(ggplot2)
 library(reshape2)
+library(ggvis)
+
 source('datasources.R')
 
 shinyServer(
@@ -82,9 +84,27 @@ output$tab1 <- renderTable({
   
 
 output$plot5 <- renderPlot({
-  stressplot(mds.pr3)
-  qplot(data=mds2, MDS1, MDS2, color=rare)
+aux<-stressplot(mds.pr3)
+p5.1<-qplot(data=data.frame(aux),x,y)
+#p5.2<-qplot(data=mds2, MDS1, MDS2, color=rare)
+ # print( grid.arrange( p5.1, p5.2 ,ncol=2 ) )
  
- })
+# This function controls the label when a point is clicked
+all_values <- function(x) {
+  if(is.null(x) || length(x) == 0) return(NULL)
+  paste0(mds2$name[mds2$MDS1==x$MDS1&mds2$MDS2==x$MDS2], ": ", x$MDS1, ", " , x$MDS2)
+}
+
+
+aa<-qvis(data=mds2,~MDS1,~MDS2)
+
+aaa<-qvis(mds2, ~MDS1, ~MDS2, 
+               fill.hover := "red", stroke.hover := "black", size.hover := 200, 
+               layers = "point") + 
+  click_tooltip(all_values)
+
+aaaa<-aa+aaa
+print( grid.arrange( p5.1, aaaa ,ncol=2 ))
+})
 
 })

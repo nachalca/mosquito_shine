@@ -28,7 +28,7 @@ lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon" 
 cap1 <-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
 cap4 <-'The right panel show the density of the distantce to the mean community, the red line es the quatile.
         In left panel each point is a site-year and the red ones are the extreme communities.'
-
+cap5<-'MDS for communities'
 
 #density plot for rare communities id
 msq.sp <- colnames(msq)[-c(1:2, 39:52)]
