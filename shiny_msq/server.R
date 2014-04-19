@@ -12,6 +12,7 @@ shinyServer(
       
     # data for plot 1
     d1  <- reactive( {subset(msq.spyr, (specie %in%input$specie) & (site%in%input$site) )})
+    #d1.1  <- reactive( {subset(msq.spyr[,c('site','specie','prop.spyr')], (specie %in%input$specie) & (site%in%input$site) )})
     
     # data for plot 2
     d2 <- reactive( { subset(msq.ia, specie %in% input$specie2) } )
@@ -29,10 +30,18 @@ shinyServer(
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
       )
   })
-  output$tab1<-renderTable({
-    summary(d1())
+#     output$tab1 <- renderTable({
+#       dataset <- d1()
+#       data.frame( dim=dim(dataset)[1], min.cnt=dataset$count, min.pr=min(dataset$prop.spyr) )
+#   })
+output$tab1 <- renderTable({
+  summary(d1())
+})
 
-    })
+  #output$tab1<-renderTable({
+    #data.frame(dim(d1()))
+   # ddply(d1(), .(factor(site)), summarise, mean=mean(prop.spyr), min=min(prop.spyr))
+  #  })
 
   output$cap1<-renderText({'description of plot'}) 
   
@@ -71,4 +80,11 @@ shinyServer(
         print( grid.arrange( p1, p2 ,ncol=2 ) )
     })
   
+
+output$plot5 <- renderPlot({
+  stressplot(mds.pr3)
+  qplot(data=mds2, MDS1, MDS2, color=rare)
+ 
+ })
+
 })

@@ -41,9 +41,72 @@ msq$distout <- dist.out[-161,161]
 dat.den<-density(c(-msq$distout,msq$distout),from=0)
 
 
-####New data set with the comlete base
+#####data to run MDS###
 
-# setwd("C:/Users/nachalca/Desktop/eco_mosquito.sql")
-# install.packages('RMySQL')
-# library(RMySQL)
-# dat.huge<-read.table('eco_mosquito.sql')
+#======================================================================           
+# distances are all the same, I think is because there are many 
+# species with very small abundance and only a few species 
+# with very high one
+
+# sp.num <- ddply(count, .(year, site), function(x) sum(x[msq] > 0) )
+# qplot(data=sp.num,x=1 ,y=V1/length(msq) ,geom='boxplot')                        
+# 
+# sp.tot <- adply(count[,msq], 2, function(x) data.frame(abu=sum(x),prec=sum(x>0)) )
+# sp.tot <- sp.tot[order(sp.tot$abu),]                
+# qplot(data=sp.prec,y=V1/160)    
+# msq1 <- with(sp.tot, X1[abu>30])
+# dist.bc <- vegdist(count[,msq1])
+# dist.ho <- vegdist(count[,msq], dist='horn')
+# dist.ja <- vegdist(count[,msq], dist='jacard')
+# dist.eu <- vegdist(count[,msq], dist='euclidean')
+# pairs(dist.bc,dist.ja)
+
+# run mds
+#mds.k3  <- metaMDS(count[,msq], k=3,autotransform=FALSE, trymax=200) 
+#mds.k2  <- metaMDS(decostand(count[,msq],method='hellinger'),autotransform=FALSE, k=2, trymax=100)                      
+#mds.pr2  <- metaMDS(prop,dist='euclidean', k=2,autotransform=FALSE, trymax=100)            
+# 
+# mds.pr3  <- metaMDS(prop ,dist='euclidean', k=2, autotransform=FALSE, trymax=100) 
+# save(mds.pr3,file='mds.RData')
+
+# #load('mds_k3euc.Rdata')
+# mds1 <- mds.pr3
+# stressplot(mds1)
+
+load('mds.Rdata')
+
+# get the poinst to plot it
+mds1 <- mds.pr3
+mds2 <- data.frame(msq[,1:2], mds1$points, dist=msq$distout)
+
+# where are the mosquito columns? 
+msq.da <- colnames(msq)[-c(1:2, 39:52)]
+env <- colnames(msq)[c(39:52)]
+
+# Compute species proportion on each site*year and the mid-community
+prop <- (msq[,msq.da]) /apply(msq[,msq.da],1,sum, na.rm=T)
+mid.comu <- apply(prop, 2, mean)
+
+# compute distance from each site*year to the mid-community
+dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean' ) ,nrow=161) 
+msq$distout <- dist.out[-161,161]
+prop2 <- cbind(msq[,c('year','site', env, 'distout')], prop )
+
+# compute quantiles for that distancs, Q90 is the cutoff 
+qs  <- round(quantile(prop2$distout, probs=seq(0,1,.1)),3)
+q90 <- quantile(prop2$distout, probs=.9) 
+
+mds2$rare <- mds2$dist > q90
+
+#write.csv(mds2, 'mdscc.csv', row.names=F)
+#save(mds1, file='mds_k3euc.Rdata')           
+
+# Regress Enviromental variables on the MDS 
+# msq.env <- envfit(mds1, count[,env],choices=c(1:3) ,999)
+# env <- data.frame(msq.env$vectors$arrows,r2=msq.env$vectors$r,pval=msq.env$vectors$pval)
+# xt <- xtable(env, caption='Enviromaental Fit on MDS 3 axis solution')
+# print(xt, caption.placement='top')
+# plot(mds1)
+# plot(msq.env, p.max=0.05)
+# 
+msq

@@ -50,7 +50,11 @@ shinyUI(bootstrapPage(
                         label = "Select y axis variable",
                         choices = lab.index,selected='DegreeDayExact')
             
-          )        
+          ),
+          conditionalPanel(condition="input.conditionedPanels==5",
+                           img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300) 
+          )
+          
                   ), # close sidebarPanel
   
     mainPanel(
@@ -60,6 +64,7 @@ shinyUI(bootstrapPage(
             tabPanel("Indexes", plotOutput("plot3"),value=3),
             #tabPanel("Rare Comunities", plotOutput("plot4.1"),plotOutput("plot4.2"),value=4),
             tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"),value=4),
+              tabPanel("MDS",p(cap1), plotOutput("plot5"),value=5),
             id="conditionedPanels" )
         
             ) # close mainPanel

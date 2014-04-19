@@ -9,7 +9,7 @@ How to run the shiny direct from GitHub:
 * go to https://github.com/nachalca/mosquito_shine
 * download the file 'shiny_msq'
 * change your directory where is the 'shiny_msq' file
-* finally runApp('shiny_msq')
+* finally runApp('shiny_msq') in R
 
 
 ```{rpack, echo=FALSE, message=FALSE,warning=FALSE}

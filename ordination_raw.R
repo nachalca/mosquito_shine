@@ -9,7 +9,7 @@ library(plyr)
 library(MASS)
 library(xtable)
 
-count  <- read.csv('shiny_msq/msqdata.csv', header=T)
+count  <- read.csv('msqdata.csv', header=T)
 
 # where are the mosquito columns? 
 msq <- colnames(count)[-c(1:2, 39:52)]
@@ -44,7 +44,7 @@ qplot(data=subset(mid, mid.comu > .001 & mid.comu<.5),y=nam, x=mid.comu, size=I(
 # We would like to identify whcih year-sites observations are far from the mean comunity structure. So we compute the euclidean distance among all sites with respect to the middle point (euclidean is ok since we are using proportions not the raw counts.). 
 # We plot a estimated density for the distances from the mean in figure \ref{dens}, the estiamted density is clarlly skewed to right. This is telling us that most of the points are arround the mean value (arround a .2 distance from the center) but there are some few year-sites observations appart from the rest. 
 
-d <- density(c(-count$dist.out[-153,153],count$dist.out[-153,153]),from=0,bw=.04)
+d <- density(c(-count$distout[-153],count$distout[-153]),from=0,bw=.04)
 qplot(x=d$x, y=d$y, geom='line', xlab='Distance', ylab='Density')
 
 qplot(data=count, DegreeDayMinus2,PrecipationMinus2)
@@ -72,6 +72,7 @@ mid <- data.frame(mid.comu, nam, row.names=NULL)
 mid2 <- melt(subset(mid,rare>.0001), id.vars='nam')
 qplot(data=mid2, y=nam, x=value, size=I(3),color=variable,shape=variable, xlab='Mean Proportion', ylab='')
 
+
 compare <- function(x,dis,q) {
     x1 <- x[dis>q,]
     x2 <- x[dis<=q,]
@@ -79,6 +80,7 @@ compare <- function(x,dis,q) {
     data.frame(rare=aux$estimate[1],common=aux$estimate[2], 
                t.stat=aux$statistic, pval=aux$p.value, row.names=NULL) 
   }
+
 env.comu <-adply(.data=prop2[,3:15],.margins=2, .fun=compare, dis=prop2$distout, q=q90)
 xt<-xtable(env.comu, digits=c(0,0,2,2,2,4), caption='Means comparison for Rare and Common comunities')
 print(xt, caption.placement='top', include.rownames=FALSE)
@@ -90,6 +92,7 @@ d <- melt(data=count, id.vars=c('site', 'year'), measure.vars=env)
 aux <- ddply(d ,.(variable),function(x) anova(lm(value~site+year,data=x)))
 data.frame(var=env, site=round(with(aux, aux[Df==7,6] ),3),year=round(with(aux, aux[Df==1,6] ),3)    
             
+#======================================================================           
            # distances are all the same, I think is because there are many 
              # species with very small abundance and only a few species 
              # with very high one
@@ -112,12 +115,12 @@ data.frame(var=env, site=round(with(aux, aux[Df==7,6] ),3),year=round(with(aux, 
            #mds.k2  <- metaMDS(decostand(count[,msq],method='hellinger'),autotransform=FALSE, k=2, trymax=100)                      
            #mds.pr2  <- metaMDS(prop,dist='euclidean', k=2,autotransform=FALSE, trymax=100)            
            
-           mds.pr3  <- metaMDS(prop,dist='euclidean', k=3,autotransform=FALSE, trymax=100) 
+           mds.pr3  <- metaMDS(prop ,dist='euclidean', k=2, autotransform=FALSE, trymax=100) 
            mds.pr3
            
   load('mds_k3euc.Rdata')
   stressplot(mds1)
-  mds1
+  mds1 <- mds.pr3
            
   # get the poinst to plot it
   #mds1 <- mds.pr3
@@ -135,3 +138,5 @@ data.frame(var=env, site=round(with(aux, aux[Df==7,6] ),3),year=round(with(aux, 
            print(xt, caption.placement='top')
            plot(mds1)
            plot(msq.env, p.max=0.05)
+
+
