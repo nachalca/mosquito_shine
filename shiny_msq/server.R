@@ -82,31 +82,52 @@ output$tab1 <- renderTable({
         print( grid.arrange( p1, p2 ,ncol=2 ) )
     })
   
-
-#output$plot5 <- renderPlot({
-
   
-aux<-stressplot(mds.pr3)
-p5.1<-qplot(data=data.frame(aux),x,y)
+# aux<-stressplot(mds.pr3)
+# p5.1<-qplot(data=data.frame(aux),x,y)
 #p5.2<-qplot(data=mds2, MDS1, MDS2, color=rare)
  # print( grid.arrange( p5.1, p5.2 ,ncol=2 ) )
  
 # This function controls the label when a point is clicked
+
+
 all_values <- function(x) {
   if(is.null(x) || length(x) == 0) return(NULL)
-  paste0(mds2$name[mds2$MDS1==x$MDS1&mds2$MDS2==x$MDS2], ": ", x$MDS1, ", " , x$MDS2)
+  paste(mds2[mds2$MDS1==x$MDS1&mds2$MDS2==x$MDS2], ": ",subset(mds2$site,mds2$MDS1==x$MDS1),round(x$MDS1,2), ", " , round(x$MDS2,2))
+ 
+ # aux<-which(vals$dataset$MDS1==x[1]& vals$dataset$MDS2==x[2])
+  #paste0('site:',vals$dataset$site[aux],collapse=",")
 }
 
-gv<- reactive({
-  
-aa<-qvis(data=mds2,~MDS1,~MDS2)
+# all_values <- function(x) {
+#   if (is.null(x)) return(NULL)
+#   if (is.null(x$site)) return(NULL)
+# tuti_values <- lab()
+# lab <- tuti_values[tuti_value$site == x$site, ]
+# 
+# paste0("<b>", lab$site, "</b><br>",
+#        lab$year, "<br>",format(lab$site, big.mark = ",", scientific = FALSE)
+# )
+# } 
 
+# all_values <- function(x) {
+#     idx <- which(mds2$site==x[1] & mds2$year==x[2])
+#     hstring <-   paste(mds2$name[idx], collapse=",")
+#   hstring
+# }
+
+gv<- reactive({
+  # Normally we could do something like props(x = ~BoxOffice, y = ~Reviews),
+  # but since the inputs are strings, we need to do a little more work.
+  
+  # Lables for axes
+ 
 aaa<-qvis(mds2, ~MDS1, ~MDS2, 
                fill.hover := "red", stroke.hover := "black", size.hover := 200, 
                layers = "point") + 
   click_tooltip(all_values)
 
-aa+aaa
+aaa
 
 })
       
