@@ -6,6 +6,7 @@ library(ggplot2)
 library(reshape2)
 library(plyr)
 library(gridExtra)
+#library(shinyAce)
 
 # load data sets we use
 msq<- read.csv('msqdata.csv', header=T)
@@ -109,4 +110,5 @@ mds2$rare <- mds2$dist > q90
 # plot(mds1)
 # plot(msq.env, p.max=0.05)
 # 
-msq
+
+ 

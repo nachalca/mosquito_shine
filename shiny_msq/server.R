@@ -6,11 +6,11 @@ library(maps)
 library(ggplot2)
 library(reshape2)
 library(ggvis)
-
+library(animint)
 source('datasources.R')
 
 shinyServer(
-  function(input, output) {
+  function(input, output,session) {
       
     # data for plot 1
     d1  <- reactive( {subset(msq.spyr, (specie %in%input$specie) & (site%in%input$site) )})
@@ -83,7 +83,9 @@ output$tab1 <- renderTable({
     })
   
 
-output$plot5 <- renderPlot({
+#output$plot5 <- renderPlot({
+
+  
 aux<-stressplot(mds.pr3)
 p5.1<-qplot(data=data.frame(aux),x,y)
 #p5.2<-qplot(data=mds2, MDS1, MDS2, color=rare)
@@ -95,7 +97,8 @@ all_values <- function(x) {
   paste0(mds2$name[mds2$MDS1==x$MDS1&mds2$MDS2==x$MDS2], ": ", x$MDS1, ", " , x$MDS2)
 }
 
-
+gv<- reactive({
+  
 aa<-qvis(data=mds2,~MDS1,~MDS2)
 
 aaa<-qvis(mds2, ~MDS1, ~MDS2, 
@@ -103,8 +106,12 @@ aaa<-qvis(mds2, ~MDS1, ~MDS2,
                layers = "point") + 
   click_tooltip(all_values)
 
-aaaa<-aa+aaa
-print( grid.arrange( p5.1, aaaa ,ncol=2 ))
+aa+aaa
+
 })
+      
+  output$controls <- renderControls(gv)
+  observe_ggvis(gv, "my_plot", session)               
+  
 
 })
