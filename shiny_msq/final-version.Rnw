@@ -1,0 +1,182 @@
+\documentclass{article}
+\usepackage{hyperref}
+\topmargin     -1.5cm  % read Lamport p.163
+\oddsidemargin -0.04cm % read Lamport p.163
+\evensidemargin -0.04cm % same as oddsidemargin but for left-hand pages
+\textwidth     16.59cm
+\textheight     22.94cm
+\parskip       7.2pt  % sets spacing between paragraphs
+\parindent       3mm  % sets leading space for paragraphs
+\usepackage{verbatim}
+\usepackage{hyperref}
+
+
+\title{Shine Mosquito, shine !!!!\\
+STAT 585 Final Project}
+\author{ Ignacio Alvarez \and Natalia da Silva}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+Iowa State University Medical Entomology Laboratory and Iowa Department of Public Health and the University Hygienic Lab (Iowa City, IA), have been monitored on an annual basis mosquito populations and mosquito-borne disease in the State of Iowa since 1969. ``The primary goal of this project was to integrate light trap data from these efforts into a centralized back-end database and interactive website that is available through the internet at \href{ http://iowa-mosquito.ent.iastate.edu}{http://iowa-mosquito.ent.iastate.edu}." (this web page is down from April 7-th).
+
+In the web page from Entomology Laboratory you can find weekly mosquito abundance compared with data from previous years. Additional interactive capabilities facilitate analyses of the data based on mosquito species, distribution, or a time frame of interest. All data can be viewed in graphical and tabular format and can be downloaded.
+
+
+\section{Objective}
+The objective of this project is design a web application using shiny package to help entomologist to visualize, summarize and analyze the data produced by the surveillance program. 
+The information presented in the Entomology Laboratory web today allows see information by specie along all the years  but we can never see more than one specie of more than one site at the same time. Then the information is there but the comparison is difficult because the visualization tool is not adequate to make a comparative analysis as they need. 
+
+
+\section{Shiny structure}
+For this shiny application we will use only part of the complete data set that entomologists are more confident in and they think are the most relevant data to analyse. Then we will use  yearly mosquito counts for 8 sites and 20 years of information. However complete data has more sites and years on weakly basis but the information with this desegregation is not comparable.
+
+The shiny app was designed to answer questions at three levels of analysis.
+\begin{itemize}
+\item \textit{Within specie}:  the objective is to analyse the individual behavior of one specie across years and for different sites. We want to answer:
+The specie behavior have changed across the years? Are some differences for each specie between sites?  
+\item \textit{Between species}: the objective is to analyse more than one specie at the same time. We want to answer: which species are more relevant in each site along all the years? 
+\item \textit{Community level}: we want to see the community dynamic, for that we analyse different indexes to describe this dynamic. 
+\end{itemize}
+
+
+Our shiny app have 5 tabset panels each of them try to answer one of the previous questions. We will describe how to use and read each tabset information base on an example 
+
+
+
+<<rpack,echo=FALSE, message=FALSE,warning=FALSE,tidy=TRUE>>=
+library(vegan)
+library(ggplot2)
+library(reshape2)
+library(plyr)
+library(gridExtra)
+@
+
+<<rdata, echo=FALSE, cache=TRUE, message=FALSE,warning=FALSE>>=
+setwd('C:/Users/nachalca/Documents/GitHub/mosquito_shine')
+# load data sets we use
+msq<- read.csv('shiny_msq/msqdata.csv', header=T)
+msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
+msq.long <- read.csv('shiny_msq/msq_long.csv', header=T)
+msq.long$subregion <- msq.long$site
+levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
+msq.spyr <- ddply(.data=msq.long,.variables=c('year','specie'),function(x) data.frame(x , prop.spyr=mean(x$prop.spst)) )
+msq.ind.aux <- melt(msq[,c(1,2,40:46)],id.vars=c('site', 'year'))
+colnames(msq.ind.aux)[3:4] <- c('Index', 'Index.val')
+
+ia.c <- map_data('county', 'iowa')
+ia.s <- map_data('state', 'iowa')
+ia2 <- subset(ia.c, subregion %in% unique(msq.long$subregion))
+#ia2$order <- NULL
+#msq.ia <- merge(msq.spyr,ia2, by= 'subregion')
+
+# only for UI
+lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon"  , "Evenness","AevexansRatio","DegreeDayExact",
+"PrecipationExact" ,"DegreeDayMinus2","PrecipationMinus2")
+cap1 <-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
+cap4 <-'The right panel show the density of the distantce to the mean community, the red line es the quatile.
+        In left panel each point is a site-year and the red ones are the extreme communities.'
+
+
+#density plot for rare communities id
+msq.sp <- colnames(msq)[-c(1:2, 39:52)]
+env   <- colnames(msq)[c(39:52)]
+# Compute species proportion on each site*year and the mid-community
+prop <- (msq[,msq.sp]) /apply(msq[,msq.sp],1,sum, na.rm=T)
+mid.comu <- apply(prop, 2, mean)
+dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean') ,nrow=161) 
+msq$distout <- dist.out[-161,161]
+dat.den<-density(c(-msq$distout,msq$distout),from=0)
+@
+
+
+\subsection{Tabset 1: Individual species description}
+
+In the first tabset we present a figure for individual species. In this figure we can select only 1 species at time, and additionally select multiple sites. The information presented in this plot is yearly species proportion  facet per site. In the each plot there are a reference line that represents the mean proportion for each species across sites. 
+
+Choices on shiny: Species (only one) and Sites. 
+
+<<rtab1, dependson=c('data')>>==
+d <- subset(msq.spyr, (specie == 'Aedes.vexans') & (site == 'Gvalley') )
+ggplot(data=d, aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
+@
+
+As an example, we show here the proportion of Aedes.Vexan on Green Valley over time, the red line represent the average proportion of this species on each year. So on average across all years and sites, this species represent around 75% of the mosquito counts. However on Green Valley the Aedes.Vexan proportion is most of the time below the mean, What happen in Green Valley ? The Vexans don't like it anymore !!!! 
+
+\subsection{Second tabset: Spatial comparison} 
+
+Our second tabset has a map, here we can select multiple species and multiple sites, the idea is to find species that share habitats and other species which are likely to be in different places. 
+
+<<{rtab2}>>=
+d <- subset(msq.spyr, specie %in% c('Aedes.triseriatus','Culex.pipiens.group'))
+d1 <- ddply(d, .(specie,subregion),summarise, 
+            prop.diff = mean((prop.spst-prop.spyr)/prop.spyr) ,
+            prop.st = mean(prop.spst), prop.yr = mean(prop.spyr),
+            lgst = prop.st/(1-prop.st) , lgyr = prop.yr/(1-prop.yr),
+            or = log(lgst/lgyr), rr = prop.st/prop.yr
+            )
+msq.ia <- merge(d1,ia2, by= 'subregion')
+
+p <- ggplot() + geom_polygon(data=ia.s, aes(x=long,y=lat,group=region, order=order) ) +
+theme(axis.text=element_blank(), axis.title=element_blank(),
+                       axis.line=element_blank(),
+                       axis.ticks=element_blank(),
+                       panel.border=element_blank(),
+                       panel.grid=element_blank())
+ 
+p + geom_point(data=msq.ia, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) 
+@
+
+\subsection{Third tabset: Community description}
+
+One important feature for the entomologist is to study the community characteristics, they are several indices reflecting different aspects of the mosquito community composition. In this plot we can choose multiple indices and multiple sites to plot the yearly value of each index on each site. These are community level plots.
+
+<<rtab3>>=
+d <- subset( msq.ind.aux, (site %in% c("Gvalley","Union")  ) & (Index%in% c('Simpson', 'SpeciesRichness') ))
+ ggplot(data=d, aes(x=year,y= Index.val))+geom_point(size=4)+
+             geom_line()+geom_line(aes(x=year,y=Index.val), color=I('red'))+facet_grid(facets=Index~site, scales='free')
+@
+
+We have choose Green Valley and Union stations with Species Richness and Simpson Index. Both measures are related to the diversity in the community. 
+
+\subsection{Fourth tabset: Identify extreme communities}
+
+Besides describing each community we may be interesting in comparing them, in particular we want to know if all communities are alike or there are some site-year observations that are different from the rest. 
+
+Working with species proportion within one site and year (instead of total counts) we compute an "average community" which simply taking average of each species proportion. 
+Then for each observations we compute the distance respect to that average community. 
+
+We plot a two panel figure, on the right is the estimated density of the distances to the mid point community. The vertical red line represent the 90 quantile. 
+
+On the left panel there is a scatter plot of two community variables and we colored the points corresponding to communities further from the center community, this is with distance bigger than its 90% quantile. 
+
+<<{rtab4}>>=
+q <- quantile(msq$distout, probs=.9) 
+d <- data.frame(lax = msq[,'PrecipationMinus2'], lay=msq[,'DominanceBP'],rare=as.factor( msq$distout > q)) 
+
+p1 <- qplot(x=dat.den$x, y=dat.den$y,geom='line',size=I(1.5)) + geom_vline(xintercept=q,color=I('red')) +
+          ylab('') + xlab('Distance to Average Community')
+
+p2 <- qplot(data=d, lax,lay, color=rare)  + scale_color_manual(values=c('black', 'red')) +
+            xlab(as.character('PrecipationMinus2')) + ylab(as.character('DominanceBP')) + theme(legend.position='bottom')
+grid.arrange( p1, p2 ,ncol=2 )                                                                                         
+@
+
+On the shiny it is possible to choose the quantile that determine which communities are consider extreme and also the variables plot in the right panel. In this example the selected quantile is 90\% and the variables are Precipitation (horizontal) and Dominance index (vertical). Basically we can see all extreme communities shows big values in Dominance but are not extreme on precipitation. 
+
+\subsection{Fifth tabset: MDS for communities}
+
+
+On the application aspects, we may include more tools to measure distances among communities, as an MDS analysis of community distance matrix using {\tt vegan} package.
+
+
+How to run the shiny direct from GitHub:
+
+\begin{enumerate}
+\item go to \href{https://github.com/nachalca/mosquito_shine}{https://github.com/nachalca/mosquito_shine}
+\item download the file \verb 'shiny_msq'
+\item change your directory where is the \verb 'shiny_msq' file
+\item finally \verb runApp('shiny_msq')  in R
+\end{enumerate}
+
+\end{document}
