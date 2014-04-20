@@ -1,9 +1,31 @@
-Shine Mosquito, shine !! (DRAFT)
+=====================================================================
+Shine Mosquito, shine !!!!
+=====================================================================
+ Final project 585
+-------------------
+Ignacio Alvarez and  Natalia da Silva
 ========================================================
 
-Iowa State University Medical Entomology Laboratory and Iowa Department of Public Health and the University Hygienic Lab (Iowa City, IA), monitors mosquito populations and mosquito-borne disease in the State of Iowa. 
 
-We will use shiny package to develop a web application to help entomologist to visualize, summarize and analyze the data produced by the surveillance program.
+## Introduction
+Iowa State University Medical Entomology Laboratory and Iowa Department of Public Health and the University Hygienic Lab (Iowa City, IA), have been monitored on an anual basis mosquito populations and mosquito-borne disease in the State of Iowa since 1969. "The primary goal of this project was to integrate light trap data from these efforts into a centralized back-end database and interactive website that is available through the internet at http://iowa-mosquito.ent.iastate.edu." (this web page is down from April 7-th).
+
+In the web page from Entomology Laboratory you can find weekly mosquito abundance compared with data from previous years. Additional interactive capabilities facilitate analyses of the data based on mosquito species, distribution, or a time frame of interest. All data can be viewed in graphical and tabular format and can be downloaded.
+
+
+##Objective
+The objective of this project is design a web application using shiny package to help entomologist to visualize, summarize and analyze the data produced by the surveillance program. 
+The information presented in the Entomology Laboratory web today allows see information by specie along all the years  but we can never see more than one specie of more than one site at the same time. Then the information is there but the comparison is difficult because the visualization tool is not adequate to make a comparative analysis as they need. 
+
+
+## Shiny structure
+
+
+This long-term data set in a centralized database/website is useful for
+informing mosquito and mosquito-borne disease control and for exploring the ecology of the species
+represented therein.
+
+
 
 How to run the shiny direct from GitHub:
 * go to https://github.com/nachalca/mosquito_shine
