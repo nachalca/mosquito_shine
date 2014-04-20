@@ -6,15 +6,18 @@ library(maps)
 library(ggplot2)
 library(reshape2)
 library(ggvis)
-library(animint)
+#library(animint)
 source('datasources.R')
 
 shinyServer(
   function(input, output,session) {
       
     # data for plot 1
-    d1  <- reactive( {subset(msq.spyr, (specie %in%input$specie) & (site%in%input$site) )})
-    #d1.1  <- reactive( {subset(msq.spyr[,c('site','specie','prop.spyr')], (specie %in%input$specie) & (site%in%input$site) )})
+    d1  <- reactive( { subset(msq.spyr, (specie %in%input$specie) & (site%in%input$site)) })
+    
+    # data for table below plot
+    d.aux <- ddply(msq.spyr, .(specie,site), summarise, prop = mean(prop.spst))
+    d1.1  <- reactive({ subset(d.aux, (specie %in%input$specie) & (site%in%input$site)) })
     
     # data for plot 2
     d2 <- reactive( { subset(msq.ia, specie %in% input$specie2) } )
@@ -32,21 +35,11 @@ shinyServer(
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
       )
   })
-#     output$tab1 <- renderTable({
-#       dataset <- d1()
-#       data.frame( dim=dim(dataset)[1], min.cnt=dataset$count, min.pr=min(dataset$prop.spyr) )
-#   })
-output$tab1 <- renderTable({
-  summary(d1())
-})
+    output$tab1 <- renderTable({
+      head(d1.1())
+   })
 
-  #output$tab1<-renderTable({
-    #data.frame(dim(d1()))
-   # ddply(d1(), .(factor(site)), summarise, mean=mean(prop.spyr), min=min(prop.spyr))
-  #  })
-
-  output$cap1<-renderText({'description of plot'}) 
-  
+  output$cap1<-renderText({'description of plot'})   
   output$plot2 <- reactivePlot(function() {        
     ggplot() + geom_polygon(data=ia.c, aes(x=long,y=lat,group=group) )
   
@@ -74,6 +67,7 @@ output$tab1 <- renderTable({
 #     output$plot4.2 <- renderPlot({
 #       print( qplot(data=d4.2(), lax,lay, color=rare))
 #     })
+
     output$plot4 <- renderPlot({
       p1 <- qplot(x=dat.den$x, y=dat.den$y,geom='line',size=I(1.5)) + 
         geom_vline(xintercept=d4.1(),color=I('red')) + ylab('') + xlab('Distance to Average Community')
@@ -89,46 +83,34 @@ output$tab1 <- renderTable({
  # print( grid.arrange( p5.1, p5.2 ,ncol=2 ) )
  
 # This function controls the label when a point is clicked
+# all_values <- function(x) {
+#   if(is.null(x) || length(x) == 0) return(NULL)
+#   paste(mds2[mds2$MDS1==x$MDS1&mds2$MDS2==x$MDS2,1], ": ",subset(mds2$site,mds2$MDS1==x$MDS1),round(x$MDS1,2), ", " , round(x$MDS2,2))
 
+#vals <- reactiveValues(dataset=mds2) 
+#     hover <- function(x) {
+#     isolate({
+#       idx <- which(vals$dataset$MDS1==x$MDS1 & vals$dataset$MDS2==x$MDS2)
+#       hstring <-   paste(vals$dataset$site[idx], collapse=",")
+#     })
+#     
+#     hstring
+#   }
 
-all_values <- function(x) {
-  if(is.null(x) || length(x) == 0) return(NULL)
-  paste(mds2[mds2$MDS1==x$MDS1&mds2$MDS2==x$MDS2], ": ",subset(mds2$site,mds2$MDS1==x$MDS1),round(x$MDS1,2), ", " , round(x$MDS2,2))
- 
- # aux<-which(vals$dataset$MDS1==x[1]& vals$dataset$MDS2==x[2])
-  #paste0('site:',vals$dataset$site[aux],collapse=",")
+#mdsdt <- reactive({mds2})
+
+showSite <- function(x) {
+  if (is.null(x)) return(NULL) 
+  xx <- as.numeric(x)
+  xx <- round(xx, 4)
+  ss <-   mds2[ round(mds2$MDS1,4) == xx[1] & round(mds2$MDS2,4) == xx[2],]
+  paste0("<b>", ss$site, "</b><br>",
+         ss$year, "<br>", x[1]) 
 }
 
-# all_values <- function(x) {
-#   if (is.null(x)) return(NULL)
-#   if (is.null(x$site)) return(NULL)
-# tuti_values <- lab()
-# lab <- tuti_values[tuti_value$site == x$site, ]
-# 
-# paste0("<b>", lab$site, "</b><br>",
-#        lab$year, "<br>",format(lab$site, big.mark = ",", scientific = FALSE)
-# )
-# } 
-
-# all_values <- function(x) {
-#     idx <- which(mds2$site==x[1] & mds2$year==x[2])
-#     hstring <-   paste(mds2$name[idx], collapse=",")
-#   hstring
-# }
-
 gv<- reactive({
-  # Normally we could do something like props(x = ~BoxOffice, y = ~Reviews),
-  # but since the inputs are strings, we need to do a little more work.
-  
-  # Lables for axes
- 
-aaa<-qvis(mds2, ~MDS1, ~MDS2, 
-               fill.hover := "red", stroke.hover := "black", size.hover := 200, 
-               layers = "point") + 
-  click_tooltip(all_values)
-
-aaa
-
+    p <- ggvis(mds2 ,props( ~MDS1, ~MDS2,fill.hover := "red", stroke.hover := "black", size.hover := 200) ) 
+  p + layer_point() + tooltip(showSite)
 })
       
   output$controls <- renderControls(gv)
