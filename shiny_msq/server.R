@@ -32,7 +32,9 @@ shinyServer(
     d4.2 <- reactive({ data.frame(lax = msq[,input$index.X], lay=msq[,input$index.Y],rare=as.factor( msq$distout > d4.1() ) ) })
     #d4.2 <- reactive({ msq[,c(input$index.X,input$index.Y)] })
     #d4.3 <- reactive({ rare = as.numeric( msq$distout > d4.1() )   })
-#==============================================
+    d6  <- reactive( { subset(msq.spyr, (geno %in%input$geno) & (site%in%input$site)) })
+    
+    #==============================================
   output$plot1 <- reactivePlot(function() {    
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
            + scale_x_continuous("Year") +scale_y_continuous("Proportion of specie"))
@@ -60,15 +62,7 @@ shinyServer(
              geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=Index.val), color=I('red'))+facet_grid(facets=Index~site, scales='free')
   )
   })
-  
-#   output$plot4.1 <- reactivePlot(function() {    
-#     print( qplot(x=dat.den$x, y=dat.den$y,geom='line')+geom_vline(xintercept=d4.1(),color=I('red'))
-#     )
-#   
-#     })  
-#     output$plot4.2 <- renderPlot({
-#       print( qplot(data=d4.2(), lax,lay, color=rare))
-#     })
+
 
     output$plot4 <- renderPlot({
       p1 <- qplot(x=dat.den$x, y=dat.den$y,geom='line',size=I(1.5)) + 
@@ -79,27 +73,6 @@ shinyServer(
     })
   
   
-# aux<-stressplot(mds.pr3)
-# p5.1<-qplot(data=data.frame(aux),x,y)
-#p5.2<-qplot(data=mds2, MDS1, MDS2, color=rare)
- # print( grid.arrange( p5.1, p5.2 ,ncol=2 ) )
- 
-# This function controls the label when a point is clicked
-# all_values <- function(x) {
-#   if(is.null(x) || length(x) == 0) return(NULL)
-#   paste(mds2[mds2$MDS1==x$MDS1&mds2$MDS2==x$MDS2,1], ": ",subset(mds2$site,mds2$MDS1==x$MDS1),round(x$MDS1,2), ", " , round(x$MDS2,2))
-
-#vals <- reactiveValues(dataset=mds2) 
-#     hover <- function(x) {
-#     isolate({
-#       idx <- which(vals$dataset$MDS1==x$MDS1 & vals$dataset$MDS2==x$MDS2)
-#       hstring <-   paste(vals$dataset$site[idx], collapse=",")
-#     })
-#     
-#     hstring
-#   }
-
-#mdsdt <- reactive({mds2})
 
 showSite <- function(x) {
   if (is.null(x)) return(NULL) 
@@ -118,5 +91,11 @@ gv<- reactive({
   output$controls <- renderControls(gv)
   observe_ggvis(gv, "my_plot", session)               
   
+
+output$plot6 <- reactivePlot(function() {    
+  print( ggplot(data=d6(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
+         + scale_x_continuous("Year") +scale_y_continuous("Proportion of specie"))
+})
+
 
 })

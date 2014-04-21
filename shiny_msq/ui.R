@@ -54,18 +54,30 @@ shinyUI(bootstrapPage(
           ),
           conditionalPanel(condition="input.conditionedPanels==5",
                            img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300) 
+          ), 
+          
+          conditionalPanel(condition="input.conditionedPanels==6",
+                              img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300),                            
+                              checkboxGroupInput(inputId = "geno",
+                                                 label = "Select genotype:",
+                                                 choices = unique(msq.long$geno),selected='Aedes'),
+                                checkboxGroupInput(inputId = "site6",
+                                              label = "Select site:",
+                                              choices = levels(msq.long$site),selected='Cfall')
           )
+          
           
                   ), # close sidebarPanel
   
     mainPanel(
         tabsetPanel(
-            tabPanel("Species-Site",p(cap1), plotOutput("plot1"),tableOutput("tab1"),p(cap1.1),value=1),    
+            tabPanel("Species-site",p(cap1), plotOutput("plot1"),tableOutput("tab1"),p(cap1.1),value=1),    
             tabPanel("Location", plotOutput("plot2"),value=2), 
             tabPanel("Indexes", plotOutput("plot3"),value=3),
             #tabPanel("Rare Comunities", plotOutput("plot4.1"),plotOutput("plot4.2"),value=4),
             tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"),value=4),
               tabPanel("MDS",p(cap5), ggvis_output("my_plot"),value=5),
+            tabPanel("Genotype-site",p(cap6), plotOutput("plot6"),value=6),
             id="conditionedPanels" )
         
             ) # close mainPanel

@@ -41,7 +41,7 @@ and Sum.above is the total of years with a proportion above the mean'
 cap4 <-'The right panel show the density of the distantce to the mean community, the red line es the quatile.
         In left panel each point is a site-year and the red ones are the extreme communities.'
 cap5<-'MDS for communities'
-
+cap6<- 'FIX the plot, reconstruct msq.long and new vbles with genotype, facet by genotype and add lines (sites) in the same genotype plot'
 #density plot for rare communities id
 msq.sp <- colnames(msq)[-c(1:2, 39:52)]
 env   <- colnames(msq)[c(39:52)]
