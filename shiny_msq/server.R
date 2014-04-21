@@ -13,10 +13,12 @@ shinyServer(
   function(input, output,session) {
       
     # data for plot 1
+    msq.spyr$pr.up <- msq.spyr$prop.spst>msq.spyr$prop.spyr
     d1  <- reactive( { subset(msq.spyr, (specie %in%input$specie) & (site%in%input$site)) })
     
     # data for table below plot
-    d.aux <- ddply(msq.spyr, .(specie,site), summarise, prop = mean(prop.spst))
+    d.aux <- ddply(msq.spyr, .(specie,site), summarise, Prop. = mean(prop.spst),Max.prop=max(prop.spst),Sum.above=sum(pr.up))
+    
     d1.1  <- reactive({ subset(d.aux, (specie %in%input$specie) & (site%in%input$site)) })
     
     # data for plot 2
@@ -33,7 +35,7 @@ shinyServer(
 #==============================================
   output$plot1 <- reactivePlot(function() {    
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
-      )
+           + scale_x_continuous("Year") +scale_y_continuous("Proportion of specie"))
   })
     output$tab1 <- renderTable({
       head(d1.1())

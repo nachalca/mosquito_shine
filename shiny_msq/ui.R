@@ -60,7 +60,7 @@ shinyUI(bootstrapPage(
   
     mainPanel(
         tabsetPanel(
-            tabPanel("Average",p(cap1), plotOutput("plot1"),tableOutput("tab1"),value=1),    
+            tabPanel("Species-Site",p(cap1), plotOutput("plot1"),tableOutput("tab1"),p(cap1.1),value=1),    
             tabPanel("Location", plotOutput("plot2"),value=2), 
             tabPanel("Indexes", plotOutput("plot3"),value=3),
             #tabPanel("Rare Comunities", plotOutput("plot4.1"),plotOutput("plot4.2"),value=4),

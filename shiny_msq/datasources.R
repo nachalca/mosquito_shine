@@ -12,12 +12,21 @@ library(gridExtra)
 msq<- read.csv('msqdata.csv', header=T)
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 msq.long <- read.csv('msq_long.csv', header=T)
+msq.long$secie2<-as.character(msq.long$specie)
 msq.long$subregion <- msq.long$site
 levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
 msq.spyr <- ddply(.data=msq.long,.variables=c('year','specie'),function(x) data.frame(x , prop.spyr=mean(x$prop.spst)) )
 msq.ind.aux <- melt(msq[,c(1,2,40:46)],id.vars=c('site', 'year'))
 colnames(msq.ind.aux)[3:4] <- c('Index', 'Index.val')
 
+
+#separate the genotype of each specie
+aux.geno <- strsplit(msq.long$secie2,'\\.')
+geno<-NULL
+for(i in 1:length(aux.geno)){
+geno[i]<-aux.geno[[i]][1]
+}
+msq.long$geno<-geno
 ia.c <- map_data('county', 'iowa')
 ia.s <- map_data('state', 'iowa')
 ia2 <- subset(ia.c, subregion %in% unique(msq.long$subregion) )
@@ -27,6 +36,8 @@ msq.ia <- merge(msq.spyr,ia2, by= 'subregion')
 lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon"  , "Evenness","AevexansRatio","DegreeDayExact",
 "PrecipationExact" ,"DegreeDayMinus2","PrecipationMinus2")
 cap1 <-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
+cap1.1 <- 'Where Prop is the proportion of a species across all the years, Max.prop is the maximum proportion across all the years
+and Sum.above is the total of years with a proportion above the mean'
 cap4 <-'The right panel show the density of the distantce to the mean community, the red line es the quatile.
         In left panel each point is a site-year and the red ones are the extreme communities.'
 cap5<-'MDS for communities'
