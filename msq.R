@@ -5,6 +5,8 @@ library(shiny)
 library(reshape2)
 runApp('shiny_msq')
 runApp('shiny_example')
+library(devtools)
+devtools::install_github(c("hadley/testthat", "rstudio/shiny", "rstudio/ggvis"))
 
 library(reshape)
 library(plyr)

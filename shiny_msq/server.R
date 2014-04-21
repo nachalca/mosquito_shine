@@ -1,12 +1,5 @@
 
-library(shiny)
-library(ggplot2)
-library(plyr)
-library(maps)
-library(ggplot2)
-library(reshape2)
-library(ggvis)
-#library(animint)
+
 source('datasources.R')
 
 shinyServer(
@@ -32,7 +25,9 @@ shinyServer(
     d4.2 <- reactive({ data.frame(lax = msq[,input$index.X], lay=msq[,input$index.Y],rare=as.factor( msq$distout > d4.1() ) ) })
     #d4.2 <- reactive({ msq[,c(input$index.X,input$index.Y)] })
     #d4.3 <- reactive({ rare = as.numeric( msq$distout > d4.1() )   })
-    d6  <- reactive( { subset(msq.spyr, (geno %in%input$geno) & (site%in%input$site)) })
+    
+    # data for plot 6
+    d6  <- reactive( { subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
     
     #==============================================
   output$plot1 <- reactivePlot(function() {    
@@ -93,8 +88,8 @@ gv<- reactive({
   
 
 output$plot6 <- reactivePlot(function() {    
-  print( ggplot(data=d6(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
-         + scale_x_continuous("Year") +scale_y_continuous("Proportion of specie"))
+  print( ggplot(data=d6(), aes(x=year,y=prop.geno))+geom_point(size=2)+geom_line(aes(color=site)) +facet_wrap(facets=~geno)
+         + scale_x_continuous("Year") +scale_y_continuous("Proportion of geno"))
 })
 
 

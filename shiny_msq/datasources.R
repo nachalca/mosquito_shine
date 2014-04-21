@@ -7,14 +7,23 @@ library(reshape2)
 library(plyr)
 library(gridExtra)
 #library(shinyAce)
+library(shiny)
+library(maps)
+library(ggvis)
+#library(animint)
 
 # load data sets we use
 msq<- read.csv('msqdata.csv', header=T)
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
+
 msq.long <- read.csv('msq_long.csv', header=T)
+
+# create subregion variable : match the county
 msq.long$secie2<-as.character(msq.long$specie)
 msq.long$subregion <- msq.long$site
 levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
+
+# create yearly proportion for each species (red line) 
 msq.spyr <- ddply(.data=msq.long,.variables=c('year','specie'),function(x) data.frame(x , prop.spyr=mean(x$prop.spst)) )
 msq.ind.aux <- melt(msq[,c(1,2,40:46)],id.vars=c('site', 'year'))
 colnames(msq.ind.aux)[3:4] <- c('Index', 'Index.val')
@@ -27,6 +36,12 @@ for(i in 1:length(aux.geno)){
 geno[i]<-aux.geno[[i]][1]
 }
 msq.long$geno<-geno
+
+# compute proportion geno proportoin for each year-site
+x <- subset(msq.long, year==1994 & site=='Cfall')
+msq.geno <- ddply(.data=msq.long,.variables=c('year','site') ,function(x) tapply(x$count, x$geno, sum)/sum(x$count) )
+msq.geno <- melt(msq.geno, id.vars=c('year','site'), variable.name='geno', value.name='prop.geno')
+
 ia.c <- map_data('county', 'iowa')
 ia.s <- map_data('state', 'iowa')
 ia2 <- subset(ia.c, subregion %in% unique(msq.long$subregion) )
