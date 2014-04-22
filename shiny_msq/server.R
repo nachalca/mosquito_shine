@@ -26,6 +26,9 @@ shinyServer(
     #d4.2 <- reactive({ msq[,c(input$index.X,input$index.Y)] })
     #d4.3 <- reactive({ rare = as.numeric( msq$distout > d4.1() )   })
     
+    #data for plot 5
+    d5 <-reactive({ data.frame(mds2, sitecol= as.factor(mds2$site ==  input$site5),color.var=msq[,as.character(input$mds.color)]) })
+  
     # data for plot 6
     d6  <- reactive( { subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
     
@@ -79,7 +82,8 @@ showSite <- function(x) {
 }
 
 gv<- reactive({
-    p <- ggvis(mds2 ,props( ~MDS1, ~MDS2,fill.hover := "red", stroke.hover := "black", size.hover := 200) ) 
+  #check<-input_select(unique((mds2$site))) 
+  p <- ggvis(d5() ,props( ~MDS1, ~MDS2, fill=~sitecol, size=~color.var,fill.hover := "red", stroke.hover := "black", size.hover := 200) ) 
   p + layer_point() + tooltip(showSite)
 })
       
