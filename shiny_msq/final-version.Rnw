@@ -25,25 +25,28 @@ In the web page from Entomology Laboratory you can find weekly mosquito abundanc
 
 \section{Objective}
 The objective of this project is design a web application using shiny package to help entomologist to visualize, summarize and analyze the data produced by the surveillance program. 
-The information presented in the Entomology Laboratory web today allows see information by specie along all the years  but we can never see more than one specie of more than one site at the same time. Then the information is there but the comparison is difficult because the visualization tool is not adequate to make a comparative analysis as they need. 
+The information presented in the Entomology Laboratory web today allows see information by specie along all the years  but we can never see more than one specie or more than one site at the same time. Then the information is there but the comparisons are difficult. We will include different visualization tools in the shiny app to make simpler the comparison at different levels (individual, group and community ). 
 
 
 \section{Shiny structure}
-For this shiny application we will use only part of the complete data set that entomologists are more confident in and they think are the most relevant data to analyse. Then we will use  yearly mosquito counts for 8 sites and 20 years of information. However complete data has more sites and years on weakly basis but the information with this desegregation is not comparable.
+For this shiny application we will use only part of the complete data set that entomologists are more confident and they think are the most relevant data to analyse. We will use  yearly mosquito counts for 8 sites and 20 years of information. However complete data has more sites and years on weakly basis but the information with this desegregation is not comparable. 
 
 The shiny app was designed to answer questions at three levels of analysis.
 \begin{itemize}
 \item \textit{Within specie}:  the objective is to analyse the individual behavior of one specie across years and for different sites. We want to answer:
-The specie behavior have changed across the years? Are some differences for each specie between sites?  
-\item \textit{Between species}: the objective is to analyse more than one specie at the same time. We want to answer: which species are more relevant in each site along all the years? 
+The specie behavior have changed across the years? Are some differences for each specie between sites?  How many years the proportion of each specie is above the mean proportion of the specie across sites?
+\item \textit{Between genotype}: the objective is to analyse more than one genotype at the same time. We want to answer: which genotype are more relevant in each site along all the years? Are there some years where some genitype is more relevant in one site?
+
 \item \textit{Community level}: we want to see the community dynamic, for that we analyse different indexes to describe this dynamic. 
 \end{itemize}
 
 
-Our shiny app have 5 tabset panels each of them try to answer one of the previous questions. We will describe how to use and read each tabset information base on an example 
+Our shiny app have 5 tabset panels each of them try are focused in some of the previous levels of analysis.  We will describe how to use the shiny app information base on examples. 
 
+\subsection{Tabset Specie-site}
 
-
+In this tabset the user will find a selectInput with all the mosquito species and a checkbox with the eight sites. The idea is to analyse one specie at time across all years and compare the behavior in the different sites. The information presented after selection will be a plot with the proportion of the mosquito specie in a specific year in a specific site. In each plot also there are a reference red line, this line represents the mean proportion for each species across sites  and is useful to see how far is the behavior of the specie in the specific site respect to it mean behavior.
+Additionally in the same tab set we can see a numeric summary of results like the proportion of the specie across all the years in the same site, the max.proportion of that specie in a site and finally the number of years that in a specific site the specie is above it mean.
 <<rpack,echo=FALSE, message=FALSE,warning=FALSE,tidy=TRUE>>=
 library(vegan)
 library(ggplot2)
@@ -89,21 +92,24 @@ msq$distout <- dist.out[-161,161]
 dat.den<-density(c(-msq$distout,msq$distout),from=0)
 @
 
+% As we said before we can select only 1 species at time, and additionally select multiple sites. The information presented in this plot is yearly species proportion  facet per site. In the each plot there are a reference line that represents the mean proportion for each species across sites. 
 
-\subsection{Tabset 1: Individual species description}
-
-In the first tabset we present a figure for individual species. In this figure we can select only 1 species at time, and additionally select multiple sites. The information presented in this plot is yearly species proportion  facet per site. In the each plot there are a reference line that represents the mean proportion for each species across sites. 
-
-Choices on shiny: Species (only one) and Sites. 
-
-<<rtab1, dependson=c('data')>>==
+Choices on shiny: Species (only one) and multiple Sites. 
+\begin{figure}[hbpt]
+<<rtab1, dependson=c('data'), fig.height=10,fig.width=8>>==
 d <- subset(msq.spyr, (specie == 'Aedes.vexans') & (site == 'Gvalley') )
 ggplot(data=d, aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
 @
+\end{figure}
+As an example, we show here the proportion of Aedes.Vexan on Green Valley over time, the red line represent the average proportion of this species on each year. So on average across all years and sites, this species represent around 75\% of the mosquito counts. However on Green Valley the Aedes.Vexan proportion is most of the time below the mean, What happen in Green Valley ? The Vexans don't like it anymore !!!! 
 
-As an example, we show here the proportion of Aedes.Vexan on Green Valley over time, the red line represent the average proportion of this species on each year. So on average across all years and sites, this species represent around 75% of the mosquito counts. However on Green Valley the Aedes.Vexan proportion is most of the time below the mean, What happen in Green Valley ? The Vexans don't like it anymore !!!! 
+\subsection{Tabset Genotype-site}
 
-\subsection{Second tabset: Spatial comparison} 
+In this tabset the user will find two checkedboxed one to select the genotype (Aedes, Anopheles, Coquilletidia, Culex, Culiseta, Orthopodomyia, Psorophora and Uranotaenia ) and the other one with the sites. In this case the user can select multiple sites and multiple genotypes. Here the idea is compare the genotypes in all the sites. We have a plot with the porportion of genotype in eachsite acorss the years. The plot facet by genotype and the sites will apear in the same plot for each genotype.
+
+ADD AN EXAMPLE!!!
+
+\subsection{Tabset Location} 
 
 Our second tabset has a map, here we can select multiple species and multiple sites, the idea is to find species that share habitats and other species which are likely to be in different places. 
 
