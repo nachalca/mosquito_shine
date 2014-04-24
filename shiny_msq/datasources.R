@@ -122,19 +122,21 @@ prop2 <- cbind(msq[,c('year','site', env, 'distout')], prop )
 # compute quantiles for that distancs, Q90 is the cutoff 
 qs  <- round(quantile(prop2$distout, probs=seq(0,1,.1)),3)
 q90 <- quantile(prop2$distout, probs=.9) 
-
 mds2$rare <- mds2$dist > q90
-
 #write.csv(mds2, 'mdscc.csv', row.names=F)
 #save(mds1, file='mds_k3euc.Rdata')           
 
+
 # Regress Enviromental variables on the MDS 
-# msq.env <- envfit(mds1, count[,env],choices=c(1:3) ,999)
+#msq.env <- envfit(mds2[,c(3,4)], msq[,env],choices=c(1:3) ,999)
+#msq.surf <- ordisurf(mds2[,c(3,4)], msq[,env[4]])
+#b<-gam(dist~s(mds2$MDS1)+s(mds2$MDS2), data=mds2)
+#plot(b,pages=1,residuals=TRUE,all.terms=TRUE,shade=TRUE,shade.col=2)
+#plot(b,pages=1,seWithMean=TRUE)
+
 # env <- data.frame(msq.env$vectors$arrows,r2=msq.env$vectors$r,pval=msq.env$vectors$pval)
 # xt <- xtable(env, caption='Enviromaental Fit on MDS 3 axis solution')
 # print(xt, caption.placement='top')
-# plot(mds1)
-# plot(msq.env, p.max=0.05)
-# 
-
+#plot(mds1)
+#plot(msq.env, p.max=0.05)
  

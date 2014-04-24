@@ -56,9 +56,10 @@ shinyUI(bootstrapPage(
                          selectInput(inputId = "site5",
                                               label = "Select site:",
                                               choices = levels(msq.long$site),selected='Cfall'),
-                         selectInput(inputId = "mds.color",
-                                     label = "Select site:",
-                                     choices = c('Aedes.vexans','Culex.pipiens.group','DegreeDayMinus2', 'PrecipationMinus2'))
+                         selectInput(inputId = "year5",
+                                     label = "Select year:",
+                                     choices = unique(mds2$year), 
+                                     selected=NULL)
                          
           
                            ), 

@@ -27,8 +27,10 @@ shinyServer(
     #d4.3 <- reactive({ rare = as.numeric( msq$distout > d4.1() )   })
     
     #data for plot 5
-    d5 <-reactive({ data.frame(mds2, sitecol= as.factor(mds2$site ==  input$site5),color.var=msq[,as.character(input$mds.color)]) })
-  
+    d5 <-reactive({ data.frame(mds2,sitecol=as.factor(mds2$site==input$site5),yearcol=as.factor(mds2$year==input$year5) )})
+    # x <-  msq[,as.character(input$mds.color)]
+    # color.var <- cut(x, breaks=quantile(x, probs=c(0,.1,.9,1)), include.lowest=T, labels=c('low','mid','high'))
+    
     # data for plot 6
     d6  <- reactive( { subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
     
@@ -77,13 +79,18 @@ showSite <- function(x) {
   xx <- as.numeric(x)
   xx <- round(xx, 4)
   ss <-   mds2[ round(mds2$MDS1,4) == xx[1] & round(mds2$MDS2,4) == xx[2],]
-  paste0("<b>", ss$site, "</b><br>",
-         ss$year, "<br>", x[1]) 
+  paste0("<b>",'Site:',ss$site, "</b><br>",
+         'Year:',ss$year, "<br>",
+         'Distance:', round(ss$dist, 3)) 
 }
+
+#aux <- data.frame(mds2, sitecol= as.factor(mds2$site ==  'Gvalley'),color.var=msq[,'Aedes.vexans'] )
+#aux2 <- subset(aux, color.var > 2524)
+
 
 gv<- reactive({
   #check<-input_select(unique((mds2$site))) 
-  p <- ggvis(d5() ,props( ~MDS1, ~MDS2, fill=~sitecol, size=~color.var,fill.hover := "red", stroke.hover := "black", size.hover := 200) ) 
+  p <- ggvis(d5() ,props( ~MDS1, ~MDS2, shape=~yearcol ,fill=~sitecol,fill.hover := "red", size.hover := 200) ) 
   p + layer_point() + tooltip(showSite)
 })
       
