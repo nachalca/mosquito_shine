@@ -38,7 +38,7 @@ geno[i]<-aux.geno[[i]][1]
 msq.long$geno<-geno
 
 # compute proportion geno proportoin for each year-site
-x <- subset(msq.long, year==1994 & site=='Cfall')
+#x <- subset(msq.long, year==1994 & site=='Cfall')
 msq.geno <- ddply(.data=msq.long,.variables=c('year','site') ,function(x) tapply(x$count, x$geno, sum)/sum(x$count) )
 msq.geno <- melt(msq.geno, id.vars=c('year','site'), variable.name='geno', value.name='prop.geno')
 
