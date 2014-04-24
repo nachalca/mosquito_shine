@@ -107,12 +107,14 @@ As an example, we show here the proportion of Aedes.Vexan on Green Valley over t
 
 \subsection{Tabset Genotype-site}
 
-In this tabset the user will find two checkedboxed, one to select the genotype (Aedes, Anopheles, Coquilletidia, Culex, Culiseta, Orthopodomyia, Psorophora and Uranotaenia ) and the other one to select the sites. In this case the user can select multiple sites and multiple genotypes. Here the idea is compare the genotypes in all the sites. We have a plot with the porportion of genotype in eachsite acorss the years. The plot facet by genotype and the sites will apear in the same plot for each genotype.
+In this tabset the user will find two checkedboxed, one to select the genotype (Aedes, Anopheles, Coquilletidia, Culex, Culiseta, Orthopodomyia, Psorophora and Uranotaenia ) and the other one to select the sites. In this case the user can select multiple sites and multiple genotypes. Here the idea is compare the genotypes in all the sites. After selcetion the user will see in each panel the proportion of a genotype in each year for a site or more than one.  The plot is faceted by genotype and each additional selected site will be added as a new line in the specific genotype plot.
 
 ADD AN EXAMPLE!!!
 
 \subsection{Tabset Location} 
-In this tabset we present a map of Iowa, here the user can select  multiple species and multiple sites. The idea in this tabset is see where is more frequent to see a particular specie. Since now there are only 8 sites and some species are not abundant a complete wite  map indicate the specie in the specific site does not like that place. If the color in the site is red then that specie is more abundat in that secific site. 
+In this tabset the user can select multiple species, after selection the user will see a plot with the Iowa map with the distributionof that specie in each site, the color indicate the abundance of the specific specie in the place. The idea in this tabset is see where is more frequent to see a particular specie. Since now there are only 8 sites and some species are not abundant a complete wite  map indicate the specie in the specific site does not like that place. If the color in the site is red then that specie is more abundat in that secific site. We can see the spacial distribution of the specie acros Iowa
+
+FIX THE PLOT!!!!
 \begin{figure}
 <<rtab2,echo=FALSE,fig.height=5,fig.width=7>>=
 d <- subset(msq.spyr, specie %in% c('Aedes.triseriatus','Culex.pipiens.group'))
@@ -136,29 +138,19 @@ p + geom_point(data=msq.ia, aes(x=long, y=lat, group=group) ) + facet_wrap(~spec
 \end{figure}
 
 \subsection{Tabset Rare communities}
-
-One important feature for the entomologist is to study the community characteristics, they are several indices reflecting different aspects of the mosquito community composition. In this plot we can choose multiple indices and multiple sites to plot the yearly value of each index on each site. These are community level plots.
-
-\begin{figure}[hbpt]
-<<rtab3,echo=FALSE,fig.height=5,fig.width=7>>=
-d <- subset( msq.ind.aux, (site %in% c("Gvalley","Union")  ) & (Index%in% c('Simpson', 'SpeciesRichness') ))
- ggplot(data=d, aes(x=year,y= Index.val))+geom_point(size=4)+
-             geom_line()+geom_line(aes(x=year,y=Index.val), color=I('red'))+facet_grid(facets=Index~site, scales='free')
-@
-\end{figure}
-
-We have choose Green Valley and Union stations with Species Richness and Simpson Index. Both measures are related to the diversity in the community. 
-
-\subsection{Fourth tabset: Identify extreme communities}
-
 Besides describing each community we may be interesting in comparing them, in particular we want to know if all communities are alike or there are some site-year observations that are different from the rest. 
+One important feature for the entomologist is to study the community characteristics, there are several indices reflecting different aspects of the mosquito community composition like abundance, simpson index, etc that will be useful for a community level comparison.
 
 Working with species proportion within one site and year (instead of total counts) we compute an "average community" which simply taking average of each species proportion. 
 Then for each observations we compute the distance respect to that average community. 
 
-We plot a two panel figure, on the right is the estimated density of the distances to the mid point community. The vertical red line represent the 90 quantile. 
 
-On the left panel there is a scatter plot of two community variables and we colored the points corresponding to communities further from the center community, this is with distance bigger than its 90% quantile. 
+In this tabset the user will find  two select imputs with variables to describe the mosquito community composition and a scrol bar to select a specific quantile. After selection the user will see the density of the distance to the mean community, the red line is the quantile. In left panel each point is a site-year and the red ones are the extreme communities, the extreme values are colored based on the selected quantile (scrol bar) and in the axis we can select differenc variables to explain the community composition.  
+
+
+We plot a two panel figure, on the right is the estimated density of the distances to the mid point community. The vertical red line represents the 90 quantile (as defect). 
+
+On the left panel there is a scatter plot of two community variables and we colored the points corresponding to communities further from the center community, this is with distance bigger than its 90\% quantile. 
 
 \begin{figure}
 <<rtab4,echo=FALSE,fig.height=5,fig.width=7>>=
@@ -177,10 +169,8 @@ grid.arrange( p1, p2 ,ncol=2 )
 
 On the shiny it is possible to choose the quantile that determine which communities are consider extreme and also the variables plot in the right panel. In this example the selected quantile is 90\% and the variables are Precipitation (horizontal) and Dominance index (vertical). Basically we can see all extreme communities shows big values in Dominance but are not extreme on precipitation. 
 
-\subsection{Fifth tabset: MDS for communities}
-
-
-On the application aspects, we may include more tools to measure distances among communities, as an MDS analysis of community distance matrix using {\tt vegan} package.
+\subsection{Tabset MDS}
+Finally in the last tabset presents also information at community level but this time we use a different tools to measure distances among communities. We present the result of an MDS analysis of community distance matrix using {\tt vegan} package. The user will see a plot with the MDS results and whenever the use go to a pointin the plot the information about site year and distance from the center will be dispayed. Additionaly the user have the option to select a specific site and a specific year and will see these values colored and with different shape in the plot representation. 
 
 
 How to run the shiny direct from GitHub:
@@ -192,4 +182,229 @@ How to run the shiny direct from GitHub:
 \item finally \verb runApp('shiny_msq')  in R
 \end{enumerate}
 
+\section{Computing}
+
+\subsection{UI}
+
+In the ui we have define the structure of the shiny app using the followin funtions:
+\begin{itemize}
+\item \verb bootstrapPage Create the shiny ui
+\item \verb fluidRow
+\item \verb sidebarLayout
+\end{itemize}
+
+<<uicode,eval=FALSE,tidy=TRUE>>=
+
+
+source('datasources.R')
+shinyUI(bootstrapPage(
+#navbarPage("MSQ", id="barnavi",  theme = "bootstrap.min.css",
+  titlePanel("Shine Mosquito shine!"), 
+    fluidRow(
+      sidebarLayout(
+        sidebarPanel(width=3,
+          conditionalPanel(condition="input.conditionedPanels==1",
+                     img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300), 
+                     #checkboxGroupInput(inputId = "specie",
+                     #     label = "Select specie:",
+                     #    choices = levels(msq.long$specie),selected='Aedes.albopictus'),
+                    selectInput(inputId = "specie",
+                            label = "Select specie:",
+                            choices = levels(msq.long$specie),selected='Aedes.vexans'),
+     
+                    checkboxGroupInput(inputId = "site",
+                            label = "Select site:",
+                            choices = levels(msq.long$site),selected='Cfall')
+                          ),
+    
+          conditionalPanel(condition="input.conditionedPanels==2",
+                           img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300),                            
+                     checkboxGroupInput(inputId = "specie2",
+                                 label = "Select specie:",
+                                 choices = levels(msq.long$specie),selected='Aedes.vexans')
+                          ),
+    
+          conditionalPanel(condition="input.conditionedPanels==3",
+                           img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300),                            
+                     checkboxGroupInput(inputId = "index",
+                                        label = "Select index:",
+                                        choices = lab.index,selected='Simpson'),
+                     checkboxGroupInput(inputId = "site3",
+                                        label = "Select site:",
+                                        choices = levels(msq.long$site),selected='Cfall')
+                          ),
+
+          conditionalPanel(condition="input.conditionedPanels==4",
+                           img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300), 
+                           sliderInput("q", "Quantile", 
+                                       min=0, max=100, value=90,step=1),
+            selectInput(inputId = "index.X",
+                         label = "Select x axis variable",
+                         choices = lab.index,selected='PrecipationExact'),
+                           
+            selectInput(inputId = "index.Y",
+                        label = "Select y axis variable",
+                        choices = lab.index,selected='DegreeDayExact')
+            
+           ),
+           conditionalPanel(condition="input.conditionedPanels==5",
+                         img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300),
+                         selectInput(inputId = "site5",
+                                              label = "Select site:",
+                                              choices = levels(msq.long$site),selected='Cfall'),
+                         selectInput(inputId = "year5",
+                                     label = "Select year:",
+                                     choices = unique(mds2$year), 
+                                     selected=NULL)
+                         
+          
+                           ), 
+          
+          conditionalPanel(condition="input.conditionedPanels==6",
+                              img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300),                            
+                              checkboxGroupInput(inputId = "geno",
+                                                 label = "Select genotype:",
+                                                 choices = unique(msq.long$geno),selected='Aedes'),
+                                checkboxGroupInput(inputId = "site6",
+                                              label = "Select site:",
+                                              choices = levels(msq.long$site),selected='Cfall')
+          )
+          
+          
+                  ), # close sidebarPanel
+  
+    mainPanel(
+        tabsetPanel(
+            tabPanel("Species-site",p(cap1), plotOutput("plot1"),tableOutput("tab1"),p(cap1.1),value=1),    
+            tabPanel("Genotype-site",p(cap6), plotOutput("plot6"),value=6),
+            tabPanel("Location", plotOutput("plot2"),value=2), 
+            tabPanel("Indexes", plotOutput("plot3"),value=3),
+            #tabPanel("Rare Comunities", plotOutput("plot4.1"),plotOutput("plot4.2"),value=4),
+            tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"),value=4),
+            tabPanel("MDS",p(cap5), ggvis_output("my_plot"),value=5),
+            
+            id="conditionedPanels" )
+        
+            ) # close mainPanel
+    
+          ) # close sidebarLayout
+        ) # close fluidRow
+      ) # close fluidPage 
+#)for web link 
+  ) # close shinyUI
+
+
+
+@
+
+\subsection{Server}
+
+<<servercode,eval=FALSE,tidy=TRUE>>=
+
+source('datasources.R')
+
+shinyServer(
+  function(input, output,session) {
+      
+    # data for plot 1
+    msq.spyr$pr.up <- msq.spyr$prop.spst>msq.spyr$prop.spyr
+    d1  <- reactive( { subset(msq.spyr, (specie %in%input$specie) & (site%in%input$site)) })
+    
+    # data for table below plot
+    d.aux <- ddply(msq.spyr, .(specie,site), summarise, Prop. = mean(prop.spst),Max.prop=max(prop.spst),Sum.above=sum(pr.up))
+    
+    d1.1  <- reactive({ subset(d.aux, (specie %in%input$specie) & (site%in%input$site)) })
+    
+    # data for plot 2
+    d2 <- reactive( { subset(msq.ia, specie %in% input$specie2) } )
+  
+    # data for plot 3
+    d3 <- reactive( { subset( msq.ind.aux, (site %in% input$site3) & (Index%in%input$index)) } )
+    
+    # data for plot 4
+    d4.1 <- reactive( { quantile(msq$distout, probs=input$q/100)} )
+    d4.2 <- reactive({ data.frame(lax = msq[,input$index.X], lay=msq[,input$index.Y],rare=as.factor( msq$distout > d4.1() ) ) })
+    #d4.2 <- reactive({ msq[,c(input$index.X,input$index.Y)] })
+    #d4.3 <- reactive({ rare = as.numeric( msq$distout > d4.1() )   })
+    
+    #data for plot 5
+    d5 <-reactive({ data.frame(mds2,sitecol=as.factor(mds2$site==input$site5),yearcol=as.factor(mds2$year==input$year5) )})
+    # x <-  msq[,as.character(input$mds.color)]
+    # color.var <- cut(x, breaks=quantile(x, probs=c(0,.1,.9,1)), include.lowest=T, labels=c('low','mid','high'))
+    
+    # data for plot 6
+    d6  <- reactive( { subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
+    
+    #==============================================
+  output$plot1 <- reactivePlot(function() {    
+    print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
+           + scale_x_continuous("Year") +scale_y_continuous("Proportion of specie"))
+  })
+    output$tab1 <- renderTable({
+      head(d1.1())
+   })
+
+  output$cap1<-renderText({'description of plot'})   
+  output$plot2 <- reactivePlot(function() {        
+    ggplot() + geom_polygon(data=ia.c, aes(x=long,y=lat,group=group) )
+  
+    p <- ggplot() + geom_polygon(data=d2(), aes(x=long,y=lat,group=group, order=order, fill=((prop.spst-prop.spyr)/prop.spyr) ) ) +
+       theme_bw() + theme(axis.text=element_blank(), axis.title=element_blank(),
+                       axis.line=element_blank(),
+                       axis.ticks=element_blank(),
+                       panel.border=element_blank(),
+                       panel.grid=element_blank(),
+                       aspect.ratio=1/1.5)
+  print(p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) + scale_fill_gradient2( low='black', high='red') )
+  })
+  
+  output$plot3 <- reactivePlot(function() {    
+    print( ggplot(data=d3(), aes(x=year,y= Index.val))+
+             geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=Index.val), color=I('red'))+facet_grid(facets=Index~site, scales='free')
+  )
+  })
+
+
+    output$plot4 <- renderPlot({
+      p1 <- qplot(x=dat.den$x, y=dat.den$y,geom='line',size=I(1.5)) + 
+        geom_vline(xintercept=d4.1(),color=I('red')) + ylab('') + xlab('Distance to Average Community')
+      p2 <- qplot(data=d4.2(), lax,lay, color=rare)  + scale_color_manual(values=c('black', 'red')) +
+            xlab(as.character(input$index.X)) + ylab(as.character(input$index.Y)) + theme(legend.position='bottom')
+        print( grid.arrange( p1, p2 ,ncol=2 ) )
+    })
+  
+  
+
+showSite <- function(x) {
+  if (is.null(x)) return(NULL) 
+  xx <- as.numeric(x)
+  xx <- round(xx, 4)
+  ss <-   mds2[ round(mds2$MDS1,4) == xx[1] & round(mds2$MDS2,4) == xx[2],]
+  paste0("<b>",'Site:',ss$site, "</b><br>",
+         'Year:',ss$year, "<br>",
+         'Distance:', round(ss$dist, 3)) 
+}
+
+#aux <- data.frame(mds2, sitecol= as.factor(mds2$site ==  'Gvalley'),color.var=msq[,'Aedes.vexans'] )
+#aux2 <- subset(aux, color.var > 2524)
+
+
+gv<- reactive({
+  #check<-input_select(unique((mds2$site))) 
+  p <- ggvis(d5() ,props( ~MDS1, ~MDS2, shape=~yearcol ,fill=~sitecol,fill.hover := "red", size.hover := 200) ) 
+  p + layer_point() + tooltip(showSite)
+})
+      
+  output$controls <- renderControls(gv)
+  observe_ggvis(gv, "my_plot", session)               
+  
+
+output$plot6 <- reactivePlot(function() {    
+  print( ggplot(data=d6(), aes(x=year,y=prop.geno))+geom_point(size=2)+geom_line(aes(color=site)) +facet_wrap(facets=~geno)
+         + scale_x_continuous("Year") +scale_y_continuous("Proportion of geno"))
+})
+
+
+})
+@
 \end{document}
