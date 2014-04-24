@@ -11,11 +11,13 @@
 \usepackage{hyperref}
 
 
+\linespread{2}
 \title{Shine Mosquito, shine !!!!\\
 STAT 585 Final Project}
 \author{ Ignacio Alvarez \and Natalia da Silva}
 \begin{document}
 \maketitle
+
 
 \section{Introduction}
 Iowa State University Medical Entomology Laboratory and Iowa Department of Public Health and the University Hygienic Lab (Iowa City, IA), have been monitored on an annual basis mosquito populations and mosquito-borne disease in the State of Iowa since 1969. ``The primary goal of this project was to integrate light trap data from these efforts into a centralized back-end database and interactive website that is available through the internet at \href{ http://iowa-mosquito.ent.iastate.edu}{http://iowa-mosquito.ent.iastate.edu}." (this web page is down from April 7-th).
@@ -29,7 +31,7 @@ The information presented in the Entomology Laboratory web today allows see info
 
 
 \section{Shiny structure}
-For this shiny application we will use only part of the complete data set that entomologists are more confident and they think are the most relevant data to analyse. We will use  yearly mosquito counts for 8 sites and 20 years of information. However complete data has more sites and years on weakly basis but the information with this desegregation is not comparable. 
+For this shiny application we will use only part of the complete data set that entomologists are more confident and they think are the most relevant data to analyse. We will use  yearly mosquito counts for 8 sites (cfall, green valley, edale, ewing, gildea, union, wloo, wlp) and 20 years of information. However complete data has more sites and years on weakly basis but the information with this desegregation is not comparable. 
 
 The shiny app was designed to answer questions at three levels of analysis.
 \begin{itemize}
@@ -46,7 +48,7 @@ Our shiny app have 5 tabset panels each of them try are focused in some of the p
 \subsection{Tabset Specie-site}
 
 In this tabset the user will find a selectInput with all the mosquito species and a checkbox with the eight sites. The idea is to analyse one specie at time across all years and compare the behavior in the different sites. The information presented after selection will be a plot with the proportion of the mosquito specie in a specific year in a specific site. In each plot also there are a reference red line, this line represents the mean proportion for each species across sites  and is useful to see how far is the behavior of the specie in the specific site respect to it mean behavior.
-Additionally in the same tab set we can see a numeric summary of results like the proportion of the specie across all the years in the same site, the max.proportion of that specie in a site and finally the number of years that in a specific site the specie is above it mean.
+Additionally in the same tab set we can see a numeric summary of results like the proportion of the specie across all the years in the same site, the maximum proportion of that specie in a site and finally the number of years that in a specific site the specie is above its mean.
 <<rpack,echo=FALSE, message=FALSE,warning=FALSE,tidy=TRUE>>=
 library(vegan)
 library(ggplot2)
@@ -96,24 +98,23 @@ dat.den<-density(c(-msq$distout,msq$distout),from=0)
 
 Choices on shiny: Species (only one) and multiple Sites. 
 \begin{figure}[hbpt]
-<<rtab1, dependson=c('data'), fig.height=10,fig.width=8>>==
+<<rtab1, dependson=c('data'), echo=FALSE,fig.height=5,fig.width=7>>==
 d <- subset(msq.spyr, (specie == 'Aedes.vexans') & (site == 'Gvalley') )
 ggplot(data=d, aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
 @
 \end{figure}
-As an example, we show here the proportion of Aedes.Vexan on Green Valley over time, the red line represent the average proportion of this species on each year. So on average across all years and sites, this species represent around 75\% of the mosquito counts. However on Green Valley the Aedes.Vexan proportion is most of the time below the mean, What happen in Green Valley ? The Vexans don't like it anymore !!!! 
+As an example, we show here the proportion of Aedes.Vexan on Green Valley over time, the red line represents the average proportion of this species on each year. So on average across all years and sites, this species represents around 75\% of the mosquito counts. However on Green Valley the Aedes.Vexan proportion is most of the time below the mean, What happen in Green Valley ? The Vexans don't like it anymore !!!! 
 
 \subsection{Tabset Genotype-site}
 
-In this tabset the user will find two checkedboxed one to select the genotype (Aedes, Anopheles, Coquilletidia, Culex, Culiseta, Orthopodomyia, Psorophora and Uranotaenia ) and the other one with the sites. In this case the user can select multiple sites and multiple genotypes. Here the idea is compare the genotypes in all the sites. We have a plot with the porportion of genotype in eachsite acorss the years. The plot facet by genotype and the sites will apear in the same plot for each genotype.
+In this tabset the user will find two checkedboxed, one to select the genotype (Aedes, Anopheles, Coquilletidia, Culex, Culiseta, Orthopodomyia, Psorophora and Uranotaenia ) and the other one to select the sites. In this case the user can select multiple sites and multiple genotypes. Here the idea is compare the genotypes in all the sites. We have a plot with the porportion of genotype in eachsite acorss the years. The plot facet by genotype and the sites will apear in the same plot for each genotype.
 
 ADD AN EXAMPLE!!!
 
 \subsection{Tabset Location} 
-
-Our second tabset has a map, here we can select multiple species and multiple sites, the idea is to find species that share habitats and other species which are likely to be in different places. 
-
-<<{rtab2}>>=
+In this tabset we present a map of Iowa, here the user can select  multiple species and multiple sites. The idea in this tabset is see where is more frequent to see a particular specie. Since now there are only 8 sites and some species are not abundant a complete wite  map indicate the specie in the specific site does not like that place. If the color in the site is red then that specie is more abundat in that secific site. 
+\begin{figure}
+<<rtab2,echo=FALSE,fig.height=5,fig.width=7>>=
 d <- subset(msq.spyr, specie %in% c('Aedes.triseriatus','Culex.pipiens.group'))
 d1 <- ddply(d, .(specie,subregion),summarise, 
             prop.diff = mean((prop.spst-prop.spyr)/prop.spyr) ,
@@ -132,16 +133,19 @@ theme(axis.text=element_blank(), axis.title=element_blank(),
  
 p + geom_point(data=msq.ia, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) 
 @
+\end{figure}
 
-\subsection{Third tabset: Community description}
+\subsection{Tabset Rare communities}
 
 One important feature for the entomologist is to study the community characteristics, they are several indices reflecting different aspects of the mosquito community composition. In this plot we can choose multiple indices and multiple sites to plot the yearly value of each index on each site. These are community level plots.
 
-<<rtab3>>=
+\begin{figure}[hbpt]
+<<rtab3,echo=FALSE,fig.height=5,fig.width=7>>=
 d <- subset( msq.ind.aux, (site %in% c("Gvalley","Union")  ) & (Index%in% c('Simpson', 'SpeciesRichness') ))
  ggplot(data=d, aes(x=year,y= Index.val))+geom_point(size=4)+
              geom_line()+geom_line(aes(x=year,y=Index.val), color=I('red'))+facet_grid(facets=Index~site, scales='free')
 @
+\end{figure}
 
 We have choose Green Valley and Union stations with Species Richness and Simpson Index. Both measures are related to the diversity in the community. 
 
@@ -156,7 +160,8 @@ We plot a two panel figure, on the right is the estimated density of the distanc
 
 On the left panel there is a scatter plot of two community variables and we colored the points corresponding to communities further from the center community, this is with distance bigger than its 90% quantile. 
 
-<<{rtab4}>>=
+\begin{figure}
+<<rtab4,echo=FALSE,fig.height=5,fig.width=7>>=
 q <- quantile(msq$distout, probs=.9) 
 d <- data.frame(lax = msq[,'PrecipationMinus2'], lay=msq[,'DominanceBP'],rare=as.factor( msq$distout > q)) 
 
@@ -167,6 +172,8 @@ p2 <- qplot(data=d, lax,lay, color=rare)  + scale_color_manual(values=c('black',
             xlab(as.character('PrecipationMinus2')) + ylab(as.character('DominanceBP')) + theme(legend.position='bottom')
 grid.arrange( p1, p2 ,ncol=2 )                                                                                         
 @
+\end{figure}
+
 
 On the shiny it is possible to choose the quantile that determine which communities are consider extreme and also the variables plot in the right panel. In this example the selected quantile is 90\% and the variables are Precipitation (horizontal) and Dominance index (vertical). Basically we can see all extreme communities shows big values in Dominance but are not extreme on precipitation. 
 
