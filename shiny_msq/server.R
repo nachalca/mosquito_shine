@@ -16,10 +16,7 @@ shinyServer(
     
     # data for plot 2
     d2 <- reactive( { subset(msq.ia, specie %in% input$specie2) } )
-  
-    # data for plot 3
-    d3 <- reactive( { subset( msq.ind.aux, (site %in% input$site3) & (Index%in%input$index)) } )
-    
+      
     # data for plot 4
     d4.1 <- reactive( { quantile(msq$distout, probs=input$q/100)} )
     d4.2 <- reactive({ data.frame(lax = msq[,input$index.X], lay=msq[,input$index.Y],rare=as.factor( msq$distout > d4.1() ) ) })
@@ -57,13 +54,6 @@ shinyServer(
   print(p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) + scale_fill_gradient2( low='black', high='red') )
   })
   
-  output$plot3 <- reactivePlot(function() {    
-    print( ggplot(data=d3(), aes(x=year,y= Index.val))+
-             geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=Index.val), color=I('red'))+facet_grid(facets=Index~site, scales='free')
-  )
-  })
-
-
     output$plot4 <- renderPlot({
       p1 <- qplot(x=dat.den$x, y=dat.den$y,geom='line',size=I(1.5)) + 
         geom_vline(xintercept=d4.1(),color=I('red')) + ylab('') + xlab('Distance to Average Community')
