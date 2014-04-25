@@ -28,15 +28,15 @@ In the web page from Entomology Laboratory you can find weekly mosquito abundanc
 
 
 \section{Application structure and design}
-Here we describe how we design the web app, what are the questions we want to address and how this is done in the app. The app have 5 tabset panels each of them try are focused in some analysis level, we describe how to use the shiny app based on examples. 
+Here we describe how we design the web app, what are the questions we want to address and how this is done in the app. The app have 5 tabset panels each of them are focused in some analysis level, we describe how to use the shiny app based on examples. 
 
-We use part of the dataset, the subset that entomologists are more confident with and they think are the most relevant for the analysis. We use yearly mosquito counts for 8 sites (cfall, green valley, edale, ewing, gildea, union, wloo, wlp) and 20 years of information. However complete data has more sites and years on weakly basis but the information with this desegregation is not comparable. 
+We use part of the dataset, the subset that entomologists are more confident with and they think are the most relevant for the analysis. We use yearly mosquito counts for 8 sites (cedar fall, green valley, edale, ewing, gildea, union, waterloo, wlp) and 20 years of information. However complete data has more sites and years on weakly basis but the information with this desegregation is not comparable. 
 
 The shiny app is designed to answer questions at three analysis level:
 \begin{enumerate}
 \item \textit{Within specie}:  the objective is to analyse the individual behavior of one specie across years and for different sites. We want to answer:
 Does the specie behavior have changed across the years? For a particular specie, is there any difference between sites?   How many years the proportion of each specie is above the mean proportion of the specie across sites?
-\item \textit{Between genotype}: the objective is to analyse more than one genotype at the same time. We want to answer: which genotype are more relevant in each site along all the years? Are there some years where some genotype is more relevant in one site?
+\item \textit{Between genotypes and species}: the objective is to analyse more than one genotype at the same time or more than one secie. We want to answer: which genotype are more relevant in each site along all the years? Are there some years where some genotype is more relevant in one site? What are the spacial abundance by specie?
 \item \textit{Community level}: we want to see the community dynamic, we want to answer:  which communities are rare? Which environmental factors are important to distinguish rare communities?
 \end{enumerate}
 
@@ -44,7 +44,7 @@ Does the specie behavior have changed across the years? For a particular specie,
 \subsection{Tabset 1: Specie-site}
 In this tabset the user can find a {\tt selectInput} with all the mosquito species and a {\tt checkbox} with all sites. The idea is to analyse one species at time across all years and compare the behavior in the different sites. The information presented after selection will be a plot with the proportion of the mosquito specie in a specific year in a specific site. In each plot also there are a reference red line, this line represents the mean proportion for each species across sites  and is useful to see how far is the behavior of the specie in the specific site respect to it mean behavior.
 
-Additionally in the same tab set we can see a numeric summary of results like the proportion of the specie across all the years in the same site, the maximum proportion of that specie in a site and finally the number of years that in a specific site the specie is above its mean.
+Additionally in the same tabset we can see a numeric summary of results like the proportion of the specie across all the years in the same site, the maximum proportion of that specie in a site and finally the number of years that in a specific site the specie is above its mean.
 <<rpack,echo=FALSE, message=FALSE,warning=FALSE,tidy=TRUE>>=
 library(vegan)
 library(ggplot2)

@@ -53,8 +53,8 @@ lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon" 
 cap1 <-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
 cap1.1 <- 'Where Prop is the proportion of a species across all the years, Max.prop is the maximum proportion across all the years
 and Sum.above is the total of years with a proportion above the mean'
-cap4 <-'The right panel show the density of the distantce to the mean community, the red line es the quatile.
-        In left panel each point is a site-year and the red ones are the extreme communities.'
+cap4 <-'The right panel shows the density of the distance to the mean community, the red line is the quatile.
+        In the left panel each point is a site-year and the red points are the extreme communities.'
 cap5<-'MDS for communities'
 cap6<- 'Compare mosquito species across all years for several sites'
 #density plot for rare communities id
