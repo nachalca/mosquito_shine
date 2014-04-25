@@ -41,7 +41,7 @@ The specie behavior have changed across the years? Are some differences for each
 \end{enumerate}
 
 
-\subsection{Tabset Specie-site}
+\subsection{Tabset 1: Specie-site}
 In this tabset the user can find a {\tt selectInput} with all the mosquito species and a {\tt checkbox} with all sites. The idea is to analyse one species at time across all years and compare the behavior in the different sites. The information presented after selection will be a plot with the proportion of the mosquito specie in a specific year in a specific site. In each plot also there are a reference red line, this line represents the mean proportion for each species across sites  and is useful to see how far is the behavior of the specie in the specific site respect to it mean behavior.
 
 Additionally in the same tab set we can see a numeric summary of results like the proportion of the specie across all the years in the same site, the maximum proportion of that specie in a site and finally the number of years that in a specific site the specie is above its mean.
@@ -110,26 +110,27 @@ Choices on shiny: Species (only one) and multiple Sites.
 d <- subset(msq.spyr, (specie == 'Aedes.vexans') & (site == 'Gvalley') )
 ggplot(data=d, aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
 @
+\caption{Example plot for tabset 1 \label{tab1}}
 \end{figure}
 As an example, we show here the proportion of Aedes.Vexan on Green Valley over time, the red line represents the average proportion of this species on each year. So on average across all years and sites, this species represents around 75\% of the mosquito counts. However on Green Valley the Aedes.Vexan proportion is most of the time below the mean, What happen in Green Valley ? The Vexans don't like it anymore !!!! 
 
-\subsection{Tabset Genotype-site}
+\subsection{Tabset 2: Genotype-site}
 
 In this tabset the user will find two checkedboxed, one to select the genotype (Aedes, Anopheles, Coquilletidia, Culex, Culiseta, Orthopodomyia, Psorophora and Uranotaenia ) and the other one to select the sites. In this case the user can select multiple sites and multiple genotypes. Here the idea is compare the genotypes in all the sites. After selcetion the user will see in each panel the proportion of a genotype in each year for a site or more than one.  The plot is faceted by genotype and each additional selected site will be added as a new line in the specific genotype plot.
 
 The example shows the two most abundant genotypes in iowa mosquitos, Aedes and culex. 
-<<rtab2, dependson=c('data'), echo=FALSE,fig.height=4>>==
+\begin{figure}
+<<rtab2, dependson=c('data'), echo=FALSE,fig.height=5>>==
 d <- subset(msq.geno, geno %in% c('Aedes','Culex') & site %in% c('Cfall', 'Gvalley') )
-
 qplot(data=d,x=year,y=prop.geno)+geom_point()+geom_line(aes(color=site))+facet_grid(facets=~geno)
 @
+\caption{Example plot for tabset 2 \label{tab2}}
+\end{figure}
 
-\subsection{Tabset Location} 
-In this tabset the user can select multiple species, after selection the user will see a plot with the Iowa map with the distributionof that specie in each site, the color indicate the abundance of the specific specie in the place. The idea in this tabset is see where is more frequent to see a particular specie. Since now there are only 8 sites and some species are not abundant a complete wite  map indicate the specie in the specific site does not like that place. If the color in the site is red then that specie is more abundat in that secific site. We can see the spacial distribution of the specie acros Iowa
+\subsection{Tabset 3: Location} 
+In this tabset the user can select multiple species, after selection the user will see a plot with the Iowa map with the distributionof that specie in each site, the color indicate the abundance of the specific specie in the place. The idea in this tabset is see \textit{where} is more frequent to see a particular specie. The current dataset has only 8 sites and some species are not abundant a complete wite  map indicate the specie in the specific site does not like that place. If the color in the site is red then that specie is more abundat in that secific site. We can see the spacial distribution of the specie acros Iowa
 
-FIX THE PLOT!!!!
-\begin{figure}
-<<rtab3,echo=FALSE,fig.height=5,fig.width=7>>=
+<<rtab3,echo=FALSE,dependson='data', results='hide'>>=
 d <- subset(msq.spyr, specie %in% c('Aedes.triseriatus','Culex.pipiens.group'))
 d1 <- ddply(d, .(specie,subregion),summarise, 
             prop.diff = mean((prop.spst-prop.spyr)/prop.spyr) ,
@@ -139,76 +140,123 @@ d1 <- ddply(d, .(specie,subregion),summarise,
             )
 msq.ia <- merge(d1,ia2, by= 'subregion')
 
-p <- ggplot() + geom_polygon(data=ia.s, aes(x=long,y=lat,group=region, order=order) ) +
-theme(axis.text=element_blank(), axis.title=element_blank(),
+p <- ggplot() + geom_polygon(data=msq.ia, aes(x=long,y=lat,group=group, order=order, fill=((prop.st-prop.yr)/prop.yr) ) ) +
+       theme_bw() + theme(axis.text=element_blank(), axis.title=element_blank(),
                        axis.line=element_blank(),
                        axis.ticks=element_blank(),
                        panel.border=element_blank(),
-                       panel.grid=element_blank())
- 
-p + geom_point(data=msq.ia, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) 
+                       panel.grid=element_blank(), legend.position='bottom' )
+pdf(file='mapaexample.pdf', height=4)
+p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) + scale_fill_gradient2( low='black', high='red') 
+dev.off()
 @
+
+\begin{figure}
+\includegraphics[width=\textwidth]{mapaexample}
+\caption{Example plot for tabset 3 \label{tab3}}
 \end{figure}
 
-\subsection{Tabset Rare communities}
+\subsection{Tabset 4: Rare communities}
 Besides describing each community we may be interesting in comparing them, in particular we want to know if all communities are alike or there are some site-year observations that are different from the rest. 
 One important feature for the entomologist is to study the community characteristics, there are several indices reflecting different aspects of the mosquito community composition like abundance, simpson index, etc that will be useful for a community level comparison.
 
 Working with species proportion within one site and year (instead of total counts) we compute an "average community" which simply taking average of each species proportion. 
 Then for each observations we compute the distance respect to that average community. 
 
-
 In this tabset the user will find  two select imputs with variables to describe the mosquito community composition and a scrol bar to select a specific quantile. After selection the user will see the density of the distance to the mean community, the red line is the quantile. In left panel each point is a site-year and the red ones are the extreme communities, the extreme values are colored based on the selected quantile (scrol bar) and in the axis we can select differenc variables to explain the community composition.  
 
-
 We plot a two panel figure, on the right is the estimated density of the distances to the mid point community. The vertical red line represents the 90 quantile (as defect). 
-
-On the left panel there is a scatter plot of two community variables and we colored the points corresponding to communities further from the center community, this is with distance bigger than its 90\% quantile. 
-
 \begin{figure}
-<<rtab4,echo=FALSE,fig.height=5,fig.width=7>>=
+<<rtab4,echo=FALSE,fig.height=4>>=
 q <- quantile(msq$distout, probs=.9) 
 d <- data.frame(lax = msq[,'PrecipationMinus2'], lay=msq[,'DominanceBP'],rare=as.factor( msq$distout > q)) 
 
 p1 <- qplot(x=dat.den$x, y=dat.den$y,geom='line',size=I(1.5)) + geom_vline(xintercept=q,color=I('red')) +
           ylab('') + xlab('Distance to Average Community')
 
-p2 <- qplot(data=d, lax,lay, color=rare)  + scale_color_manual(values=c('black', 'red')) +
-            xlab(as.character('PrecipationMinus2')) + ylab(as.character('DominanceBP')) + theme(legend.position='bottom')
+p2 <- qplot(data=d, lax,lay, color=rare)  + scale_color_manual(values=c('black', 'red')) + xlab(as.character('PrecipationMinus2')) + ylab(as.character('DominanceBP')) + theme(legend.position='bottom')
 grid.arrange( p1, p2 ,ncol=2 )                                                                                         
 @
+\caption{Example plot for tabset 4 \label{tab4}}
 \end{figure}
 
+On the left panel there is a scatter plot of two community variables and we colored the points corresponding to communities further from the center community, this is with distance bigger than its 90\% quantile. 
 
 On the shiny it is possible to choose the quantile that determine which communities are consider extreme and also the variables plot in the right panel. In this example the selected quantile is 90\% and the variables are Precipitation (horizontal) and Dominance index (vertical). Basically we can see all extreme communities shows big values in Dominance but are not extreme on precipitation. 
 
 \subsection{Tabset MDS}
-Finally in the last tabset presents also information at community level but this time we use a different tools to measure distances among communities. We present the result of an MDS analysis of community distance matrix using {\tt vegan} package. The user will see a plot with the MDS results and whenever the use go to a pointin the plot the information about site year and distance from the center will be dispayed. Additionaly the user have the option to select a specific site and a specific year and will see these values colored and with different shape in the plot representation. 
+The last tabset presents also information at community level, this time we compute a distance matrix with every distances among each pair of communities. We an Multidimensional Scaling (MDS) to visualize the distance matrix, the distance computation and the MDS are done using {\tt vegan} package with {\tt vegdist} and {\tt metaMDS} functions. 
 
+The user will see a scatterplot with the MDS results and going over any point with the mouse it will display some information to identify the specific community, in particular, information about site, year and distance from the center will be dispayed. 
 
-How to run the shiny direct from GitHub:
+Additionaly the user have the option to select a specific site and a specific year and will see these values colored and with different shape in the plot representation. 
 
-% \begin{enumerate}
-% \item go to \href{https://github.com/nachalca/mosquito_shine}{https://github.com/nachalca/mosquito_shine}
-% \item download the file \verb 'shiny_msq'
-% \item change your directory where is the \verb 'shiny_msq' file
-% \item finally \verb runApp('shiny_msq')  in R
-% \end{enumerate}
+\begin{figure}
+\includegraphics[scale=.4, width=\textwidth]{screenshot}
+\caption{Example plot for tabset 5 \label{tab5}}
+\end{figure}
+
+\subsection{Using the app}
+We finish the web app description with a little intruction on how to run the application and get ready to analyze the mosquito surveillance data. You just need to follow these steps :
+
+\begin{enumerate}
+\item go to \href{https://github.com/nachalca/mosquito_shine}{https://github.com/nachalca/mosquito_shine}
+\item copy the folder \textit{shiny$\_$msq} into your local machine
+\item Open {\verb R } and change the working directory where \textit{shiny$\_$msq} folder is saved
+\item run {\verb library(shiny) }
+\item run {\verb runApp('shiny_msq') }
+\end{enumerate}
 
 \section{Computing}
 
+There are 3 R files needed to run this app: {\verb ui.R }, {\verb server.R } and {\verb datasources.R }. The last one is a code read and transform the data set used by the shiny app. We describe the main characteristics of {\verb ui.R } and {\verb server.R } files in this section. 
+
 \subsection{UI}
 
-% In the ui we have define the structure of the shiny app using the followin funtions:
-% \begin{itemize}
-% \item \verb bootstrapPage Create the shiny ui
-% \item \verb fluidRow
-% \item \verb sidebarLayout
-% \end{itemize}
+The ui have two principal aspects, the {\verb slidebarPanel } and {\verb mainPanel }, we have 5 tabsets in the web app and we design it to have differents shiny options on each tabset. Then the {\verb slidebarPanel } consist in a series of 5 {\verb conditionalPanel } one per tabset, for example the tabset 4 options are implemented by the following code
 
-<<uicode,eval=FALSE,tidy=TRUE>>=
+<<cond1,eval=FALSE,tidy=TRUE>>=
+          conditionalPanel(condition="input.conditionedPanels==4",
+                           img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300), 
+                           sliderInput("q", "Quantile", 
+                                       min=0, max=100, value=90,step=1),
+                          
+                           selectInput(inputId = "index.X",
+                                      label = "Select x axis variable",
+                                      choices = lab.index,selected='PrecipationExact'),
+                           
+                          selectInput(inputId = "index.Y",
+                                        label = "Select y axis variable",
+                                        choices = lab.index,selected='DegreeDayExact')
+            
+           )
+@
+
+this create 3 options, the first one for selecting a quantile to act as a limit of what is consider as an extreme comunity, the other two allows the selection of the x and y variables for the scatterplot. 
+
+The {\verb mainPanel } basically set up a tabpanel for each tabset we want to organize the output, the code is the following 
+<<main,eval=FALSE,tidy=TRUE>>=
+    mainPanel(
+        tabsetPanel(
+            tabPanel("Species-site",p(cap1), plotOutput("plot1"),tableOutput("tab1"),p(cap1.1),value=1),
+            
+            tabPanel("Genotype-site",p(cap6), plotOutput("plot6"),value=6),
+            
+            tabPanel("Location", plotOutput("plot2"),value=2), 
+            
+            tabPanel("Indexes", plotOutput("plot3"),value=3),
+            
+            tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"),value=4),
+            
+            tabPanel("MDS",p(cap5), ggvis_output("my_plot"),value=5),
+            
+            id="conditionedPanels")
+            
+        ) # close mainPanel
+@
 
 
+<<uicode,eval=FALSE,tidy=TRUE,echo=FALSE>>=
 source('datasources.R')
 shinyUI(bootstrapPage(
 #navbarPage("MSQ", id="barnavi",  theme = "bootstrap.min.css",
@@ -312,7 +360,42 @@ shinyUI(bootstrapPage(
 
 \subsection{Server}
 
-<<servercode,eval=FALSE,tidy=TRUE>>=
+We have organized the server file in two main parts, a first part where we create reactive data set for each plot we want to include, and after using each reactive data set we create a reactive plot or table to include in the tabset. 
+
+As an example, here is the dataset and the plot to create the last tabset, 
+
+<<ggivsplot, eval=FALSE, tidy=TRUE>>=
+#data for plot 5
+    d5 <-reactive({ data.frame(mds2,sitecol=as.factor(mds2$site==input$site5),yearcol=as.factor(mds2$year==input$year5) )})
+
+# function for display information with the tooltip
+showSite <- function(x) {
+  if (is.null(x)) return(NULL) 
+  xx <- as.numeric(x)
+  xx <- round(xx, 4)
+  ss <-   mds2[ round(mds2$MDS1,4) == xx[1] & round(mds2$MDS2,4) == xx[2],]
+  paste0("<b>",'Site:',ss$site, "</b><br>",
+         'Year:',ss$year, "<br>",
+         'Distance:', round(ss$dist, 3)) 
+}
+
+# ggvis plot
+gv<- reactive({
+  #check<-input_select(unique((mds2$site))) 
+  p <- ggvis(d5() ,props( ~MDS1, ~MDS2, shape=~yearcol ,fill=~sitecol,fill.hover := "red", size.hover := 200) ) 
+  p + layer_point() + tooltip(showSite)
+})
+  
+# set up the output plot
+output$controls <- renderControls(gv)
+observe_ggvis(gv, "my_plot", session)               
+output$plot6 <- reactivePlot(function() {    
+  print( ggplot(data=d6(), aes(x=year,y=prop.geno))+geom_point(size=2)+geom_line(aes(color=site)) +facet_wrap(facets=~geno)
+         + scale_x_continuous("Year") +scale_y_continuous("Proportion of geno"))
+})
+@
+
+<<servercode,eval=FALSE,tidy=TRUE, echo=FALSE>>=
 
 source('datasources.R')
 
