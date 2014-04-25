@@ -18,7 +18,7 @@ STAT 585 Final Project}
 
 
 \section{Introduction}
-We want to learn and build a shiny app as a final project for Stat585, using {\tt shiny} package we can create wep aplication for data analissys that allow the final usser make the data exploration by themselves. 
+We want to learn and build a shiny app as a final project for Stat585, using {\tt shiny} package we can create web application for data analysis that allow the final user make the data exploration by themselves. 
 
 Iowa State University Medical Entomology Laboratory and Iowa Department of Public Health and the University Hygienic Lab (Iowa City, IA), have been monitored on an annual basis mosquito populations and mosquito-borne disease in the State of Iowa since 1969. ``The primary goal of this project was to integrate light trap data from these efforts into a centralized back-end database and interactive website that is available through the internet at \href{ http://iowa-mosquito.ent.iastate.edu}{http://iowa-mosquito.ent.iastate.edu}." (this web page is down from April 7-th).
 
@@ -28,16 +28,16 @@ In the web page from Entomology Laboratory you can find weekly mosquito abundanc
 
 
 \section{Application structure and design}
-Here we describe how we design the web app, what are the questions we want to adress and how this is done in the app. The app have 5 tabset panels each of them try are focused in some analysis level, we describe how to use the shiny app cbased on examples. 
+Here we describe how we design the web app, what are the questions we want to address and how this is done in the app. The app have 5 tabset panels each of them try are focused in some analysis level, we describe how to use the shiny app based on examples. 
 
 We use part of the dataset, the subset that entomologists are more confident with and they think are the most relevant for the analysis. We use yearly mosquito counts for 8 sites (cfall, green valley, edale, ewing, gildea, union, wloo, wlp) and 20 years of information. However complete data has more sites and years on weakly basis but the information with this desegregation is not comparable. 
 
 The shiny app is designed to answer questions at three analysis level:
 \begin{enumerate}
 \item \textit{Within specie}:  the objective is to analyse the individual behavior of one specie across years and for different sites. We want to answer:
-The specie behavior have changed across the years? Are some differences for each specie between sites?  How many years the proportion of each specie is above the mean proportion of the specie across sites?
-\item \textit{Between genotype}: the objective is to analyse more than one genotype at the same time. We want to answer: which genotype are more relevant in each site along all the years? Are there some years where some genitype is more relevant in one site?
-\item \textit{Community level}: we want to see the community dynamic, for that we analyse different indexes to describe this dynamic. 
+Does the specie behavior have changed across the years? For a particular specie, is there any difference between sites?   How many years the proportion of each specie is above the mean proportion of the specie across sites?
+\item \textit{Between genotype}: the objective is to analyse more than one genotype at the same time. We want to answer: which genotype are more relevant in each site along all the years? Are there some years where some genotype is more relevant in one site?
+\item \textit{Community level}: we want to see the community dynamic, we want to answer:  which communities are rare? Which environmental factors are important to distinguish rare communities?
 \end{enumerate}
 
 
@@ -108,7 +108,7 @@ Choices on shiny: Species (only one) and multiple Sites.
 \begin{figure}[hbpt]
 <<rtab1, dependson=c('data'), echo=FALSE,fig.height=4>>==
 d <- subset(msq.spyr, (specie == 'Aedes.vexans') & (site == 'Gvalley') )
-ggplot(data=d, aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
+ggplot(data=d, aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+scale_y_continuous('Proportion of specie')+scale_x_continuous('Year')+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
 @
 \caption{Example plot for tabset 1 \label{tab1}}
 \end{figure}
@@ -116,19 +116,19 @@ As an example, we show here the proportion of Aedes.Vexan on Green Valley over t
 
 \subsection{Tabset 2: Genotype-site}
 
-In this tabset the user will find two checkedboxed, one to select the genotype (Aedes, Anopheles, Coquilletidia, Culex, Culiseta, Orthopodomyia, Psorophora and Uranotaenia ) and the other one to select the sites. In this case the user can select multiple sites and multiple genotypes. Here the idea is compare the genotypes in all the sites. After selcetion the user will see in each panel the proportion of a genotype in each year for a site or more than one.  The plot is faceted by genotype and each additional selected site will be added as a new line in the specific genotype plot.
+In this tabset the user will find two checkedboxed, one to select the genotype (Aedes, Anopheles, Coquilletidia, Culex, Culiseta, Orthopodomyia, Psorophora and Uranotaenia ) and the other one to select the sites. In this case the user can select multiple sites and multiple genotypes. Here the idea is compare the genotypes in all the sites. After selection the user will see in each panel the proportion of a genotype in each year for a site or more than one.  The plot is faceted by genotype and each additional selected site will be added as a new line in the specific genotype plot.
 
-The example shows the two most abundant genotypes in iowa mosquitos, Aedes and culex. 
+The example shows the two most abundant genotypes in Iowa mosquito, Aedes and culex. 
 \begin{figure}
-<<rtab2, dependson=c('data'), echo=FALSE,fig.height=5>>==
+<<rtab2, dependson=c('data'), echo=FALSE,fig.height=4,fig.width=7>>==
 d <- subset(msq.geno, geno %in% c('Aedes','Culex') & site %in% c('Cfall', 'Gvalley') )
-qplot(data=d,x=year,y=prop.geno)+geom_point()+geom_line(aes(color=site))+facet_grid(facets=~geno)
+qplot(data=d,x=year,y=prop.geno)+geom_point()+scale_x_continuous('Year')+scale_y_continuous('Proportion of genotype')+geom_line(aes(color=site))+facet_grid(facets=~geno)
 @
 \caption{Example plot for tabset 2 \label{tab2}}
 \end{figure}
 
 \subsection{Tabset 3: Location} 
-In this tabset the user can select multiple species, after selection the user will see a plot with the Iowa map with the distributionof that specie in each site, the color indicate the abundance of the specific specie in the place. The idea in this tabset is see \textit{where} is more frequent to see a particular specie. The current dataset has only 8 sites and some species are not abundant a complete wite  map indicate the specie in the specific site does not like that place. If the color in the site is red then that specie is more abundat in that secific site. We can see the spacial distribution of the specie acros Iowa
+In this tabset the user can select multiple species, after selection the user will see a plot with the Iowa map with the distribution of that specie in each site, the color indicate the abundance of the specific specie in the place. The idea in this tabset is see \textit{where} is more frequent to see a particular specie. The current dataset has only 8 sites and some species are not abundant a complete withe  map indicate the specie in the specific site does not like that place. If the color in the site is red then that specie is more abundant in that specific site. We can see the spacial distribution of the specie across Iowa
 
 <<rtab3,echo=FALSE,dependson='data', results='hide'>>=
 d <- subset(msq.spyr, specie %in% c('Aedes.triseriatus','Culex.pipiens.group'))
@@ -147,7 +147,7 @@ p <- ggplot() + geom_polygon(data=msq.ia, aes(x=long,y=lat,group=group, order=or
                        panel.border=element_blank(),
                        panel.grid=element_blank(), legend.position='bottom' )
 pdf(file='mapaexample.pdf', height=4)
-p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) + scale_fill_gradient2( low='black', high='red') 
+p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) + scale_fill_gradient2( low='black', high='red') +theme(legend.title=element_blank())
 dev.off()
 @
 
@@ -158,12 +158,12 @@ dev.off()
 
 \subsection{Tabset 4: Rare communities}
 Besides describing each community we may be interesting in comparing them, in particular we want to know if all communities are alike or there are some site-year observations that are different from the rest. 
-One important feature for the entomologist is to study the community characteristics, there are several indices reflecting different aspects of the mosquito community composition like abundance, simpson index, etc that will be useful for a community level comparison.
+One important feature for the entomologist is to study the community characteristics, there are several indices reflecting different aspects of the mosquito community composition like abundance, Simpson index, etc that will be useful for a community level comparison.
 
 Working with species proportion within one site and year (instead of total counts) we compute an "average community" which simply taking average of each species proportion. 
 Then for each observations we compute the distance respect to that average community. 
 
-In this tabset the user will find  two select imputs with variables to describe the mosquito community composition and a scrol bar to select a specific quantile. After selection the user will see the density of the distance to the mean community, the red line is the quantile. In left panel each point is a site-year and the red ones are the extreme communities, the extreme values are colored based on the selected quantile (scrol bar) and in the axis we can select differenc variables to explain the community composition.  
+In this tabset the user will find  two select inputs with variables to describe the mosquito community composition and a scroll bar to select a specific quantile. After selection the user will see the density of the distance to the mean community, the red line is the quantile. In left panel each point is a site-year and the red ones are the extreme communities, the extreme values are colored based on the selected quantile (scroll bar) and in the axis we can select difference variables to explain the community composition.  
 
 We plot a two panel figure, on the right is the estimated density of the distances to the mid point community. The vertical red line represents the 90 quantile (as defect). 
 \begin{figure}
@@ -187,9 +187,9 @@ On the shiny it is possible to choose the quantile that determine which communit
 \subsection{Tabset MDS}
 The last tabset presents also information at community level, this time we compute a distance matrix with every distances among each pair of communities. We an Multidimensional Scaling (MDS) to visualize the distance matrix, the distance computation and the MDS are done using {\tt vegan} package with {\tt vegdist} and {\tt metaMDS} functions. 
 
-The user will see a scatterplot with the MDS results and going over any point with the mouse it will display some information to identify the specific community, in particular, information about site, year and distance from the center will be dispayed. 
+The user will see a scatterplot with the MDS results and going over any point with the mouse it will display some information to identify the specific community, in particular, information about site, year and distance from the center will be displayed. 
 
-Additionaly the user have the option to select a specific site and a specific year and will see these values colored and with different shape in the plot representation. 
+Additionally the user have the option to select a specific site and a specific year and will see these values colored and with different shape in the plot representation. 
 
 \begin{figure}
 \includegraphics[scale=.4, width=\textwidth]{screenshot}
@@ -197,7 +197,7 @@ Additionaly the user have the option to select a specific site and a specific ye
 \end{figure}
 
 \subsection{Using the app}
-We finish the web app description with a little intruction on how to run the application and get ready to analyze the mosquito surveillance data. You just need to follow these steps :
+We finish the web app description with a little instruction on how to run the application and get ready to analyze the mosquito surveillance data. You just need to follow these steps :
 
 \begin{enumerate}
 \item go to \href{https://github.com/nachalca/mosquito_shine}{https://github.com/nachalca/mosquito_shine}
@@ -232,7 +232,7 @@ The ui have two principal aspects, the {\verb slidebarPanel } and {\verb mainPan
            )
 @
 
-this create 3 options, the first one for selecting a quantile to act as a limit of what is consider as an extreme comunity, the other two allows the selection of the x and y variables for the scatterplot. 
+this create 3 options, the first one for selecting a quantile to act as a limit of what is consider as an extreme community, the other two allows the selection of the x and y variables for the scatterplot. 
 
 The {\verb mainPanel } basically set up a tabpanel for each tabset we want to organize the output, the code is the following 
 <<main,eval=FALSE,tidy=TRUE>>=
