@@ -51,7 +51,7 @@ shinyServer(
                        panel.border=element_blank(),
                        panel.grid=element_blank(),
                        aspect.ratio=1/1.5)
-  print(p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) + scale_fill_gradient2( low='black', high='red') )
+  print(p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) + scale_fill_gradient2( low='black', high='red') + theme(legend.title=element_blank()) ) 
   })
   
     output$plot4 <- renderPlot({
