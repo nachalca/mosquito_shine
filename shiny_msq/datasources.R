@@ -9,6 +9,7 @@ library(gridExtra)
 #library(shinyAce)
 library(shiny)
 library(maps)
+install.packages('ggvis')
 library(ggvis)
 #library(animint)
 
