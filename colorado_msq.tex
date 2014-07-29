@@ -1,0 +1,99 @@
+
+
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{hyperref}
+\topmargin     -1.5cm  % read Lamport p.163
+\oddsidemargin -0.04cm % read Lamport p.163
+\evensidemargin -0.04cm % same as oddsidemargin but for left-hand pages
+\textwidth     16.59cm
+\textheight     22.94cm
+\parskip       7.2pt  % sets spacing between paragraphs
+\parindent       3mm  % sets leading space for paragraphs
+\usepackage{verbatim}
+\usepackage{hyperref}
+\usepackage{authblk}
+
+%\linespread{2}
+\title{Twenty Year Ecological Analyses of Adult Mosquito Communities in Iowa}
+\date{}
+
+%\author{Ignacio Alvarez \and Natalia da Silva \and Mike Dunbar}
+\author[1]{Ignacio Alvarez}
+\author[1]{Natalia da Silva}
+\author[2]{Mike Dunbar}
+
+\affil[1]{Department of Statistics, Iowa State University}
+\affil[2]{Department of Entomology, Iowa State University}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\section*{Abstract}
+There are thousands of species of mosquitoes globally, but very few of these transmit disease agents. The geographic distributions of many mosquitoes overlap significantly. In the state of Iowa, there are 55 species of mosquito, and many of them share the same habitat, hosts, and seasonality.  
+
+Mosquito population dynamics have been monitored annually since 1969, at numerous sites across the state of Iowa.  The traps used have run on a daily basis from late spring through early fall. Eight of these trapping sites were chosen for ecological and statistical analyses based on the availability of 20 years of unbroken data (1994 to 2013). During this 20 year period, over 385,000 specimens of 36 species were trapped and identified. The objective of this study was to use these data to characterize mosquito population dynamics and interactions over the course of 2 decades. 
+
+Mean community composition was calculated from all observations and was used to identify communities with rare structures. Non-metric multidimensional scaling (NMDS) was used to analyze the differences in structure among common and rare communities.  Furthermore, species indices (proportion of species or genera), ecological indices (abundance, species richness, and measures of diversity) and abiotic factors (precipitation and degree-day accumulation) were also determined for all observations. 
+
+A web application, using the Shiny package, was designed to generate novel ways to visualize this long-term dataset. Shiny is a modern and powerful way to combine interactive graphics with the statistical analysis in order to help entomologist to visualize, summarize and analyze the data produced by a mosquito surveillance program. The shiny app is designed to answer questions at three analysis level:
+
+\begin{itemize}
+\item  Within species: the objective is to analyze the individual presence/absence characteristics of one species across years and for different sites.  This allows us to ask:  Does the species occurrence change across the years? For a particular species, is there any difference between sites?  For how many years does the proportion of each species exceed the mean proportion of the species across sites?
+
+\item Between species:   We want to answer: which species is more abundant in each site across the years? Are there some years where some species is more abundant in one site? What are the spatially abundant species?
+
+\item Community level: we want to visualize community dynamics to answer: which communities are rare? Which environmental factors are important to distinguish rare communities?
+\end{itemize}
+
+\emph{Keywords: Shiny, interactive graphics, Non-metric Multidimensional scaling,mosquito population dynamics} 
+\end{document}
