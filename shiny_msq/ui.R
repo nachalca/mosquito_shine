@@ -73,7 +73,7 @@ shinyUI(bootstrapPage(
             tabPanel("Genotype-site",p(cap6), plotOutput("plot6"),value=6),
             tabPanel("Location", plotOutput("plot2"),value=2), 
             tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"),value=4),
-            tabPanel("MDS",p(cap5), ggvis_output("my_plot"),value=5),
+            tabPanel("MDS",p(cap5), ggvisOutput("my_plot"),value=5),
             
             id="conditionedPanels" )
         

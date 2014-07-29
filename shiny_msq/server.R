@@ -68,7 +68,7 @@ showSite <- function(x) {
   if (is.null(x)) return(NULL) 
   xx <- as.numeric(x)
   xx <- round(xx, 4)
-  ss <-   mds2[ round(mds2$MDS1,4) == xx[1] & round(mds2$MDS2,4) == xx[2],]
+  ss <-   mds2[ round(mds2$MDS1,4) == xx[3] & round(mds2$MDS2,4) == xx[4],]
   paste0("<b>",'Site:',ss$site, "</b><br>",
          'Year:',ss$year, "<br>",
          'Distance:', round(ss$dist, 3)) 
@@ -80,12 +80,13 @@ showSite <- function(x) {
 
 gv<- reactive({
   #check<-input_select(unique((mds2$site))) 
-  p <- ggvis(d5() ,props( ~MDS1, ~MDS2, shape=~yearcol ,fill=~sitecol,fill.hover := "red", size.hover := 200) ) 
-  p + layer_point() + tooltip(showSite)
+  p <- ggvis(d5() , ~MDS1, ~MDS2, shape=~yearcol ,fill=~sitecol,fill.hover := "red", size.hover := 200 ) 
+  p  %>% layer_points() %>%  add_tooltip(showSite) 
 })
-      
-  output$controls <- renderControls(gv)
-  observe_ggvis(gv, "my_plot", session)               
+
+  gv <- bind_shiny(gv, "my_plot")
+  #output$controls <- renderControls(gv)
+  #observe_ggvis(gv, "my_plot", session)               
   
 
 output$plot6 <- reactivePlot(function() {    
