@@ -10,8 +10,38 @@ devtools::install_github(c("hadley/testthat", "rstudio/shiny", "rstudio/ggvis"))
 
 library(reshape)
 library(plyr)
-#  msq 
+#=========================================================
+#   WEEKLY DATA FOR 8 SITES
 
+# 1) downlad data from website 
+# location codes for the 8 sites we have: 
+site.info <- data.frame( 
+  namme = c("Cfall","Edale","Ewing","Gildea","Gvalley","Union","Wloo","WLP"),
+  code = c(828, 823, 868, 819, 837, 827 ,824, 861) )
+
+f1 <- function(loc) {
+  library(XML)
+  url <- paste("http://mosquito.ent.iastate.edu/browse_location2.php?locID=",as.character(loc),sep='')
+  doc <- htmlParse(url)
+  root <- xmlRoot(doc)
+  links <- getNodeSet(root, "//a[@href]")
+  linksDF <- ldply(links, function(x) xmlAttrs(x)["href"])
+  linksDF <- linksDF[ agrep("browse_year2_dl", linksDF$href), , drop=FALSE]
+  linksDF$href <- paste('http://mosquito.ent.iastate.edu/',linksDF$href,sep='')
+  mdply(linksDF, function(href) read.csv(href, header=T) )
+}
+d <- data.frame(loc=site.info$code)
+dd <- mdply(d, f1, .progress=progress_text('-'))
+# save raw data
+save(dd, file='weeklydata.Rdata')
+
+# 2) Cleaning weekly data
+load('weeklydata.Rdata')
+
+
+#=========================================================
+#=========================================================
+#  msq 
 msq<- read.csv('shiny_msq/msqdata.csv', header=T)
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 msq.long$subregion <- msq.long$site
@@ -77,9 +107,10 @@ shinyServer(function(input, output) {
     print(ggplot(data=d(), aes(x=year, y=count,color=forest))+geom_point(size=4) +geom_line()+facet_grid(facets=forest~.) )
   })
 })
-
-
-
 ggplot(data=msq.long, aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
 qplot(data=msq.long,x=year,y=prop.spst,color=specie)
+
+
+
+
 
