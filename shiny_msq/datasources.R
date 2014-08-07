@@ -9,7 +9,7 @@ library(gridExtra)
 #library(shinyAce)
 library(shiny)
 library(maps)
-library(ggvis)
+#library(ggvis)
 #library(animint)
 
 # load data sets we use

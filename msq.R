@@ -63,17 +63,44 @@ cnd <- mdply(data.frame( nam = colnames(weekdata)) , f3 )
 week.fem <- cbind(weekdata[,1:4],weekdata[,cnd$V1])
 
 # 2.2 Retain only relevant spcecies (the noes identified by Mike)
+msq<- read.csv('shiny_msq/msqdata.csv', header=T)
 nam <- paste(colnames(msq)[3:38], 'F', sep='.')
 cnd <- colnames(week.fem) %in% nam
 week.fem <- cbind(week.fem[,1:4],week.fem[,cnd])
 
-#remove uncorrect  locations
-week.fem<-week.fem[,-c(1,3,4,5,91,96)]
+loc.aux<-c('<!-- this file was cached on Aug 06 2014-->','-','2','PE-#1 (1976','PE-#2 (1976','PE-#3 (1976-1977)',
+           'PE-#1 (River Park 1978-2010)','<!-- this file was cached on Aug 07 2014-->','0','1','3','DE-W. 32nd St. (2009',
+           'PE-#3 (Mosquito Creek 2009)','SY-Horticulture Research Station (2009','PE-#1 (Recycling Center 2011-2013)',
+           'SY-State Forest Nursery (shed 2009)')
+
+# obtain 8 locations in the 'reduced' data set
+
+loc8 <- c('BK-Cedar Falls (Hartman Reserve)','BK-Evansdale','PK-Ewing','ST-Gildea','WY-Green Valley','PK-Union','BK-Waterloo','ST-West Lake Park (WLP)')
+
+week.msq <- subset(week.fem, y %in% 1994:2013 & location %in% loc8)
+
+
+
+vacio<-function(x) { 
+  if ( is.character(x) ) {
+        x[x=='-'] <- 'NA' 
+        x <- as.numeric(x)
+    }
+  x
+}
+
+
+weekly.aux<-data.frame(week.msq[,1:4],apply(week.msq[,-(1:4)],2,vacio))
+
+
+weekly<-ddply(weekly.aux,.(y,location,WeekRef),function(x) apply(x[,-(1:4)],2,sum,na.rm=TRUE))
+
+
 
 #=========================================================
 #=========================================================
 #  msq 
-msq<- read.csv('shiny_msq/msqdata.csv', header=T)
+
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 msq.long$subregion <- msq.long$site
 levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
