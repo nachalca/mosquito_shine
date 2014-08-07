@@ -3,6 +3,7 @@
 #install.packages('shiny')
 library(shiny)
 library(reshape2)
+library(ggplot2)
 runApp('shiny_msq')
 runApp('shiny_example')
 library(devtools)
@@ -19,6 +20,7 @@ site.info <- data.frame(
   namme = c("Cfall","Edale","Ewing","Gildea","Gvalley","Union","Wloo","WLP"),
   code = c(828, 823, 868, 819, 837, 827 ,824, 861) )
 
+# f1 donwload data for all years in one location
 f1 <- function(loc) {
   library(XML)
   url <- paste("http://mosquito.ent.iastate.edu/browse_location2.php?locID=",as.character(loc),sep='')
@@ -30,14 +32,43 @@ f1 <- function(loc) {
   linksDF$href <- paste('http://mosquito.ent.iastate.edu/',linksDF$href,sep='')
   mdply(linksDF, function(href) read.csv(href, header=T) )
 }
-d <- data.frame(loc=site.info$code)
-dd <- mdply(d, f1, .progress=progress_text('-'))
-# save raw data
-save(dd, file='weeklydata.Rdata')
+# d <- data.frame(loc=site.info$code)
+# dd <- mdply(d, f1, .progress=progress_text('-'))
+# # save raw data
+# save(dd, file='weeklydata.Rdata')
+
+# f2 donwload data from all locations for one year
+f2 <- function(y) {
+  url <- paste('http://mosquito.ent.iastate.edu/browse_year2_dl.php?y=',as.character(y),sep='')
+  read.csv(url, header=T)
+}
+aux <- f2(1991)  
+years <- data.frame(y=1969:2014)
+weekdata <- mdply(years, f2, .progress=progress_text('-'))
+
+with(weekdata, table(location, WeekRef))
+save(weekdata, file='weeklydata.Rdata')
 
 # 2) Cleaning weekly data
 load('weeklydata.Rdata')
 
+#2.1 remove male counts since female is the one who care
+f3<- function(nam) {
+  nam <- as.character(nam)
+  x <-  strsplit(nam , '\\.')[[1]]
+  l <- length(x)
+  x[l]=='F'
+} 
+cnd <- mdply(data.frame( nam = colnames(weekdata)) , f3 )
+week.fem <- cbind(weekdata[,1:4],weekdata[,cnd$V1])
+
+# 2.2 Retain only relevant spcecies (the noes identified by Mike)
+nam <- paste(colnames(msq)[3:38], 'F', sep='.')
+cnd <- colnames(week.fem) %in% nam
+week.fem <- cbind(week.fem[,1:4],week.fem[,cnd])
+
+#remove uncorrect  locations
+week.fem<-week.fem[,-c(1,3,4,5,91,96)]
 
 #=========================================================
 #=========================================================
