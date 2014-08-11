@@ -29,7 +29,7 @@ shinyServer(
     # color.var <- cut(x, breaks=quantile(x, probs=c(0,.1,.9,1)), include.lowest=T, labels=c('low','mid','high'))
     
     # data for plot 6
-    #d6  <- reactive( { subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
+    d6  <- reactive( { subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
     
     #==============================================
   output$plot1 <- reactivePlot(function() {    
@@ -89,10 +89,10 @@ showSite <- function(x) {
 #   #observe_ggvis(gv, "my_plot", session)               
 #   
 # 
-# output$plot6 <- reactivePlot(function() {    
-#   print( ggplot(data=d6(), aes(x=year,y=prop.geno))+geom_point(size=2)+geom_line(aes(color=site)) +facet_wrap(facets=~geno)
-#          + scale_x_continuous("Year") +scale_y_continuous("Proportion of geno"))
-# })
-# 
+output$plot6 <- reactivePlot(function() {    
+  print( ggplot(data=d6(), aes(x=year,y=prop.geno))+geom_point(size=2)+geom_line(aes(color=site)) +facet_wrap(facets=~geno)
+         + scale_x_continuous("Year") +scale_y_continuous("Proportion of geno"))
+})
+ 
 
 })
