@@ -4,10 +4,10 @@
 library(shiny)
 library(reshape2)
 library(ggplot2)
-runApp('shiny_msq')
-runApp('shiny_example')
-library(devtools)
-devtools::install_github(c("hadley/testthat", "rstudio/shiny", "rstudio/ggvis"))
+#runApp('shiny_msq')
+#runApp('shiny_example')
+#library(devtools)
+#devtools::install_github(c("hadley/testthat", "rstudio/shiny", "rstudio/ggvis"))
 
 library(reshape)
 library(plyr)
@@ -79,8 +79,6 @@ loc8 <- c('BK-Cedar Falls (Hartman Reserve)','BK-Evansdale','PK-Ewing','ST-Gilde
 
 week.msq <- subset(week.fem, y %in% 1994:2013 & location %in% loc8)
 
-
-
 vacio<-function(x) { 
   if ( is.character(x) ) {
         x[x=='-'] <- 'NA' 
@@ -88,19 +86,25 @@ vacio<-function(x) {
     }
   x
 }
-
-
 weekly.aux<-data.frame(week.msq[,1:4],apply(week.msq[,-(1:4)],2,vacio))
 
-
+# weekly: has the total weekly count of each mosquito species in each site-year-week
 weekly<-ddply(weekly.aux,.(y,location,WeekRef),function(x) apply(x[,-(1:4)],2,sum,na.rm=TRUE))
+
+#3) Ploting weekly data
+
+d <- melt(data=weekly,id.vars=c("y","location","WeekRef"))
+qplot(data=subset(d,variable="Aedes.vexans.F"), x=WeekRef, y=value, geom='line', color=y)
+
+
+
+
 
 
 
 #=========================================================
 #=========================================================
 #  msq 
-
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 msq.long$subregion <- msq.long$site
 levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
