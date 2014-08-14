@@ -3,9 +3,10 @@ library(shiny)
 bird.tot <- read.csv('bird_yeartotal.csv', header=T)
   
 shinyUI(bootstrapPage(
-  headerPanel("Bird Count Trend"), 
-  
-  sidebarPanel( 
+  titlePanel("Bird Count Trend"), 
+  fluidRow(
+    sidebarLayout(
+  sidebarPanel(width=3, 
     selectInput(inputId = "specie",
                 label = "Select Bird specie:",
                 choices = levels( bird.tot$abbrev )
@@ -21,5 +22,6 @@ shinyUI(bootstrapPage(
       
     )
   )
-  
+ 
+    ))
 ))
