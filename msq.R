@@ -2,6 +2,7 @@
 
 #install.packages('shiny')
 library(shiny)
+library(lubridate)
 library(reshape2)
 library(ggplot2)
 #runApp('shiny_msq')
@@ -52,6 +53,8 @@ save(weekdata, file='weeklydata.Rdata')
 # 2) Cleaning weekly data
 load('weeklydata.Rdata')
 
+
+
 #2.1 remove male counts since female is the one who care
 f3<- function(nam) {
   nam <- as.character(nam)
@@ -88,19 +91,31 @@ vacio<-function(x) {
 }
 weekly.aux<-data.frame(week.msq[,1:4],apply(week.msq[,-(1:4)],2,vacio))
 
+date.lu<-ymd(as.character(weekly.aux$Date))
+week.lu<-week(date.lu)
+weekly.aux<-data.frame(date.lu,week.lu,weekly.aux)
 # weekly: has the total weekly count of each mosquito species in each site-year-week
-weekly<-ddply(weekly.aux,.(y,location,WeekRef),function(x) apply(x[,-(1:4)],2,sum,na.rm=TRUE))
+weekly<-ddply(weekly.aux,.(y,location,week.lu),function(x) apply(x[,-(1:6)],2,sum,na.rm=TRUE))
+
+
+
+
 
 #3) Ploting weekly data
 
-d <- melt(data=weekly,id.vars=c("y","location","WeekRef"))
-qplot(data=subset(d,variable="Aedes.vexans.F"), x=WeekRef, y=value, geom='line', color=y)
 
 
+d <- melt(data=weekly,id.vars=c("y","location","week.lu"))
+qplot(data=subset(d,variable=="Aedes.vexans.F"), x=week.lu, y=log(value),geom='line',group=y, facets=~location)
+
+qplot(data=subset(d,variable=="Aedes.vexans.F"), x=week.lu, y=value,geom='boxplot', group=week.lu, facets=~location) + scale_y_log10()
 
 
+mean.w<-ddply(d,.(location,week.lu,variable),function(x) mean(x$value,na.rm=TRUE))
+qplot(data=subset(mean.w,variable=="Psorophora.columbiae.F"), x=week.lu, y=V1,geom='line', facets=~location) + scale_y_log10()
 
-
+mean.w$location <- factor(mean.w$location)
+write.csv(mean.w,file='shiny_msq/meanw.csv',row.names=FALSE)
 
 #=========================================================
 #=========================================================

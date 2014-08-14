@@ -31,6 +31,8 @@ shinyServer(
     # data for plot 6
     d6  <- reactive( { subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
     
+    d7  <-reactive({subset(mean.w,(variable%in%input$specie7)&(location%in%input$site7))})
+    
     #==============================================
   output$plot1 <- reactivePlot(function() {    
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
@@ -93,5 +95,10 @@ output$plot6 <- reactivePlot(function() {
          + scale_x_continuous("Year") +scale_y_continuous("Proportion of geno"))
 })
  
+output$plot7 <- reactivePlot(function() {    
+  print(qplot(data=d7(), x=week.lu, y=V1, color=variable, geom=c('point','line'), facets=~location) + scale_y_log10() )
+#  print( ggplot(data=d7(), aes(x=week.lu,y=V1))+geom_line() +facet_wrap(facets=~location)
+#         + scale_x_continuous("Week") +scale_y_continuous("Mosquito count"))+scale_y_log10()
+})
 
 })

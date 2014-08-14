@@ -61,7 +61,16 @@ shinyUI(bootstrapPage(
                                 checkboxGroupInput(inputId = "site6",
                                               label = "Select site:",
                                               choices = levels(msq.long$site),selected='Cfall')
-          )
+          ),
+         conditionalPanel(condition="input.conditionedPanels==7",
+                          img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300),                            
+                          checkboxGroupInput(inputId = "specie7",
+                                             label = "Select specie:",
+                                             choices = unique(mean.w$variable),selected='Aedes.vexans.F'),
+                          checkboxGroupInput(inputId = "site7",
+                                             label = "Select site:",
+                                             choices = levels(mean.w$location),selected="PK-Ewing")
+         )
           
           
                   ), # close sidebarPanel
@@ -73,6 +82,7 @@ shinyUI(bootstrapPage(
             tabPanel("Location", plotOutput("plot2"),value=2), 
             tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"),value=4),
             tabPanel("MDS",p(cap5), ggvisOutput("my_plot"),value=5),
+            tabPanel("Week",p(cap7), plotOutput("plot7"),value=7),
             
             id="conditionedPanels" )
         

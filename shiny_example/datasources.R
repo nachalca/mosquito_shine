@@ -9,15 +9,18 @@ library(gridExtra)
 #library(shinyAce)
 library(shiny)
 library(maps)
-library(ggvis)
+#library(ggvis)
 #library(animint)
 
+# for the birds ...
+bird.tot <- read.csv('bird_yeartotal.csv', header=T)
+
+#========
 # load data sets we use
 msq<- read.csv('msqdata.csv', header=T)
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 
 msq.long <- read.csv('msq_long.csv', header=T)
-mean.w<-read.csv('meanw.csv',header=T)
 
 # create subregion variable : match the county
 msq.long$secie2<-as.character(msq.long$specie)
@@ -42,7 +45,6 @@ msq.long$geno<-geno
 #x <- subset(msq.long, year==1994 & site=='Cfall')
 msq.geno <- ddply(.data=msq.long,.variables=c('year','site') ,function(x) tapply(x$count, x$geno, sum)/sum(x$count) )
 msq.geno <- melt(msq.geno, id.vars=c('year','site'), variable.name='geno', value.name='prop.geno')
-colnames(msq.geno) <- c('year','site','geno','prop.geno')
 
 ia.c <- map_data('county', 'iowa')
 ia.s <- map_data('state', 'iowa')
@@ -58,8 +60,7 @@ and Sum.above is the total of years with a proportion above the mean'
 cap4 <-'The right panel shows the density of the distance to the mean community, the red line is the quatile.
         In the left panel each point is a site-year and the red points are the extreme communities.'
 cap5<-'MDS for communities'
-cap6 <- 'Compare mosquito species across all years for several sites'
-cap7 <- 'Weekly count in logs for several sites'
+cap6<- 'Compare mosquito species across all years for several sites'
 #density plot for rare communities id
 msq.sp <- colnames(msq)[-c(1:2, 39:52)]
 env   <- colnames(msq)[c(39:52)]
@@ -69,12 +70,15 @@ mid.comu <- apply(prop, 2, mean)
 dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean') ,nrow=161) 
 msq$distout <- dist.out[-161,161]
 dat.den<-density(c(-msq$distout,msq$distout),from=0)
-#======================================================================           
+
 
 #####data to run MDS###
+
+#======================================================================           
 # distances are all the same, I think is because there are many 
 # species with very small abundance and only a few species 
 # with very high one
+
 # sp.num <- ddply(count, .(year, site), function(x) sum(x[msq] > 0) )
 # qplot(data=sp.num,x=1 ,y=V1/length(msq) ,geom='boxplot')                        
 # 
@@ -95,17 +99,17 @@ dat.den<-density(c(-msq$distout,msq$distout),from=0)
 # 
 # mds.pr3  <- metaMDS(prop ,dist='euclidean', k=2, autotransform=FALSE, trymax=100) 
 # save(mds.pr3,file='mds.RData')
+
 # #load('mds_k3euc.Rdata')
 # mds1 <- mds.pr3
 # stressplot(mds1)
-#
-# get the poinst to plot it
-# load('mds.Rdata')
-# mds1 <- mds.pr3
-# mds2 <- data.frame(msq[,1:2], mds1$points, dist=msq$distout)
-# write.csv(mds2, file='mdspoints.csv', row.names=FALSE)
 
-mds2 <- read.csv('mdspoints.csv', header=T)
+load('mds.Rdata')
+
+# get the poinst to plot it
+mds1 <- mds.pr3
+mds2 <- data.frame(msq[,1:2], mds1$points, dist=msq$distout)
+
 # where are the mosquito columns? 
 msq.da <- colnames(msq)[-c(1:2, 39:52)]
 env <- colnames(msq)[c(39:52)]
@@ -125,6 +129,7 @@ q90 <- quantile(prop2$distout, probs=.9)
 mds2$rare <- mds2$dist > q90
 #write.csv(mds2, 'mdscc.csv', row.names=F)
 #save(mds1, file='mds_k3euc.Rdata')           
+
 
 # Regress Enviromental variables on the MDS 
 #msq.env <- envfit(mds2[,c(3,4)], msq[,env],choices=c(1:3) ,999)
