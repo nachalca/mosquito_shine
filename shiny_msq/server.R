@@ -1,6 +1,6 @@
 
 
-#source('datasources.R')
+source('datasources.R')
 
 shinyServer(
   function(input, output,session) {
@@ -30,6 +30,8 @@ shinyServer(
     
     # data for plot 6
     d6  <- reactive( { subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
+    
+    d7  <-reactive({subset(mean.w,(variable%in%input$specie7)&(location%in%input$site7))})
     
     #==============================================
   output$plot1 <- reactivePlot(function() {    
@@ -74,25 +76,29 @@ showSite <- function(x) {
          'Distance:', round(ss$dist, 3)) 
 }
 
-#aux <- data.frame(mds2, sitecol= as.factor(mds2$site ==  'Gvalley'),color.var=msq[,'Aedes.vexans'] )
-#aux2 <- subset(aux, color.var > 2524)
+aux <- data.frame(mds2, sitecol= as.factor(mds2$site ==  'Gvalley'),color.var=msq[,'Aedes.vexans'] )
+aux2 <- subset(aux, color.var > 2524)
 
 
-# gv<- reactive({
-#   #check<-input_select(unique((mds2$site))) 
-#   p <- ggvis(d5() , ~MDS1, ~MDS2, shape=~yearcol ,fill=~sitecol,fill.hover := "red", size.hover := 200 ) 
-#   p  %>% layer_points() %>%  add_tooltip(showSite) 
-# })
-# 
-#   gv <- bind_shiny(gv, "my_plot")
-#   #output$controls <- renderControls(gv)
-#   #observe_ggvis(gv, "my_plot", session)               
-#   
-# 
+gv<- reactive({
+  #check<-input_select(unique((mds2$site))) 
+  p <- ggvis(d5() , ~MDS1, ~MDS2, shape=~yearcol ,fill=~sitecol,fill.hover := "red", size.hover := 200 ) 
+  p  %>% layer_points() %>%  add_tooltip(showSite) 
+})
+
+  gv <- bind_shiny(gv, "my_plot")
+  #output$controls <- renderControls(gv)
+  #observe_ggvis(gv, "my_plot", session)               
+  
 output$plot6 <- reactivePlot(function() {    
   print( ggplot(data=d6(), aes(x=year,y=prop.geno))+geom_point(size=2)+geom_line(aes(color=site)) +facet_wrap(facets=~geno)
          + scale_x_continuous("Year") +scale_y_continuous("Proportion of geno"))
 })
  
+output$plot7 <- reactivePlot(function() {    
+  print(qplot(data=d7(), x=week.lu, y=V1, color=variable, geom=c('point','line'), facets=~location) + scale_y_log10() )
+#  print( ggplot(data=d7(), aes(x=week.lu,y=V1))+geom_line() +facet_wrap(facets=~location)
+#         + scale_x_continuous("Week") +scale_y_continuous("Mosquito count"))+scale_y_log10()
+})
 
 })
