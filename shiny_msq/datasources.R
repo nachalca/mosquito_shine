@@ -140,7 +140,17 @@ mds2$rare <- mds2$dist > q90
 #plot(mds1)
 #plot(msq.env, p.max=0.05)
  
-###new for poster
+### new for poster
+
+# Modelling occurrence of a rare community: 
+# 1) Response: Maybe binary (Rare vs Common) or continous (distance from center)
+# 2) Exp. Variables: we can use all variables toghether, or we can separate into 
+#    groups (g1: indices like,  simpson, shanon; g1: species proportions; g3: site,year,precipitation)
+# 3) Stat model: We can use a RF since is really flexible with no assumptions but it also 
+# give us a inportance measure for each variable. We can also model with some GLM to obtain 
+# numerical measure for the effect of each variables and posibly a characterization of the 
+# 90% quantile. 
+
 
 rf.dat<-merge(msq[,c(1,2,39:53)],mds2[,c(1,2,6)],by=c('site','year'))
 rf.geno<-dcast(msq.geno,year+site~geno)
@@ -149,5 +159,11 @@ rf.dat<-merge(rf.dat,rf.geno,by=c('site','year'))
 rf.dat$rare<-as.factor(rf.dat$rare)
 library(randomForest)
 
-rf <- randomForest(rare ~ . , data=rf.dat, importance=T, ntree=2000, proximity=TRUE)
+rf <- randomForest(rare ~ . -distout, data=rf.dat, importance=T)
+varImpPlot(rf, n.var=10, main='Variable importance for predicting Rare occurrence')
+
+rf.cont <- randomForest(distout ~ . -rare, data=rf.dat, importance=T)
+varImpPlot(rf.cont , n.var=10, main='Variable importance for predicting Rare occurrence')
+
+data.frame(round(cor(rf.dat[,-c(1,18)]),2))
 
