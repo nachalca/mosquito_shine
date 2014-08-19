@@ -13,6 +13,7 @@ library(ggvis)
 #library(animint)
 
 # load data sets we use
+#setwd("/Users/nataliadasilva//Documents/mosquito_shine/shiny_msq")
 msq<- read.csv('msqdata.csv', header=T)
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 
@@ -139,3 +140,14 @@ mds2$rare <- mds2$dist > q90
 #plot(mds1)
 #plot(msq.env, p.max=0.05)
  
+###new for poster
+
+rf.dat<-merge(msq[,c(1,2,39:53)],mds2[,c(1,2,6)],by=c('site','year'))
+rf.geno<-dcast(msq.geno,year+site~geno)
+
+rf.dat<-merge(rf.dat,rf.geno,by=c('site','year'))
+rf.dat$rare<-as.factor(rf.dat$rare)
+library(randomForest)
+
+rf <- randomForest(rare ~ . , data=rf.dat, importance=T, ntree=2000, proximity=TRUE)
+
