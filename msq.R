@@ -104,7 +104,6 @@ weekly<-ddply(weekly.aux,.(y,location,week.lu),function(x) apply(x[,-(1:6)],2,su
 #3) Ploting weekly data
 
 
-
 d <- melt(data=weekly,id.vars=c("y","location","week.lu"))
 qplot(data=subset(d,variable=="Aedes.vexans.F"), x=week.lu, y=log(value),geom='line',group=y, facets=~location)
 
@@ -119,6 +118,7 @@ write.csv(mean.w,file='shiny_msq/meanw.csv',row.names=FALSE)
 
 #=========================================================
 #=========================================================
+#msq.long data that we use in shiny
 #  msq 
 msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
 msq.long$subregion <- msq.long$site
@@ -135,59 +135,65 @@ jaja<-ddply(.data=msq.long,.variables='specie',function(x) mean(x$prop.spst,na.r
 
 write.csv(msq.long, file='shiny_msq/msq_long.csv', row.names=FALSE)
 
-#data in proporton 
 
-library(maps)
-library(ggplot2)
+#=======================================================
+#=======================================================          
 
-ia.c <- map_data('county', 'iowa')
-ia.s <- map_data('state')
+#####data to run MDS###
+#Create a data.frame with MDS's for different distance selection.
+library(vegan)
+#count mosquito data
 
+# load data sets we use
+#setwd("/Users/nataliadasilva//Documents/mosquito_shine/shiny_msq")
+msq<- read.csv('msqdata.csv', header=T)
+msq.sp <- msq[-c(1:2, 39:53)]
+metaMDS(msq.sp, distance = "euclidean",k=3)
 
-ia2 <- subset(ia.c, subregion %in% unique(msq$subregion) )
-msq.ia <- merge(msq.long,ia2, by= 'subregion')
+f1<-function(k,d){
+converge<-FALSE; t<-100
+  while(converge==FALSE & t<=1000){
+  aux<-metaMDS(msq.sp, distance=d,k=k,autotransform=FALSE, trymax=t) 
+  converge<-aux$converged
+  t<-t+100
+  }
+data.frame(stress=aux$stress,conv=aux$converged,aux$points)
+}
 
+dis.aux<-expand.grid(d=c("euclidean","canberra", "bray", "jaccard", "horn"),k=2:3)
+dis.aux[,1]<-as.character(dis.aux[,1])
 
-m <- mean(msq$Culex.pipiens.group)
+mdss<-mdply(dis.aux,f1)
 
-msq.ia2 <- subset(msq.ia, specie %in% c('Culex.pipiens.group', 'Aedes.dorsalis'))
-ggplot(data=msq.ia2 ,aes(long,lat)) +facet_wrap(~specie) + geom_polygon(aes(group=group, order=order, fill=prop.sps) ) +
-geom_path(data=ia.s, aes(x=long, y=lat, group=group) )
-  
+# distances are all the same, I think is because there are many 
+# species with very small abundance and only a few species 
+# with very high one
+# sp.num <- ddply(count, .(year, site), function(x) sum(x[msq] > 0) )
+# qplot(data=sp.num,x=1 ,y=V1/length(msq) ,geom='boxplot')                        
+# 
+# sp.tot <- adply(count[,msq], 2, function(x) data.frame(abu=sum(x),prec=sum(x>0)) )
+# sp.tot <- sp.tot[order(sp.tot$abu),]                
+# qplot(data=sp.prec,y=V1/160)    
+# msq1 <- with(sp.tot, X1[abu>30])
+# dist.bc <- vegdist(count[,msq1])
+# dist.ho <- vegdist(count[,msq], dist='horn')
+# dist.ja <- vegdist(count[,msq], dist='jacard')
+# dist.eu <- vegdist(count[,msq], dist='euclidean')
+# pairs(dist.bc,dist.ja)
 
-
-geom_point(data=ia3, aes(long,lat,color=Culex.pipiens.group ))
-geom_polygon(data=ia3, aes(group=group, order=order, fill=Culex.pipiens.group) ) +
-scale_fill_gradient2( low='black', high='red', midpoint=m)
-
-
-
-
-library(shiny)
-library(ggplot2)
-
-
-shinyServer(function(input, output) {
-  bird.tot <- read.csv('bird_yeartotal.csv', header=T)
-  bird.tot$forest <- as.factor(as.character(bird.tot$forest))
-  d  <- reactive( {subset(bird.tot, abbrev == input$specie)} )
-  d1 <- reactive( {subset(bird.tot, abbrev == input$specie, select=c('ave','count') )} )
-  
-  output$summary <- renderTable({
-    summary(d1())
-  })
-  
-  output$plot1 <- reactivePlot(function() {    
-    print(ggplot(data=d(), aes(x=year, y=ave,color=forest))+geom_point(size=4)+geom_line()+geom_smooth()+facet_grid(facets=forest~.) )
-  })
-  output$plot2 <- reactivePlot(function() {    
-    print(ggplot(data=d(), aes(x=year, y=count,color=forest))+geom_point(size=4) +geom_line()+facet_grid(facets=forest~.) )
-  })
-})
-ggplot(data=msq.long, aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
-qplot(data=msq.long,x=year,y=prop.spst,color=specie)
-
-
-
-
-
+# run mds
+#mds.k3  <- metaMDS(count[,msq], k=3,autotransform=FALSE, trymax=200) 
+#mds.k2  <- metaMDS(decostand(count[,msq],method='hellinger'),autotransform=FALSE, k=2, trymax=100)                      
+#mds.pr2  <- metaMDS(prop,dist='euclidean', k=2,autotransform=FALSE, trymax=100)            
+# 
+# mds.pr3  <- metaMDS(prop ,dist='euclidean', k=2, autotransform=FALSE, trymax=100) 
+# save(mds.pr3,file='mds.RData')
+# #load('mds_k3euc.Rdata')
+# mds1 <- mds.pr3
+# stressplot(mds1)
+#
+# get the poinst to plot it
+# load('mds.Rdata')
+# mds1 <- mds.pr3
+# mds2 <- data.frame(msq[,1:2], mds1$points, dist=msq$distout)
+# write.csv(mds2, file='shiny_msq/mdspoints.csv', row.names=FALSE)
