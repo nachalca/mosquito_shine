@@ -22,8 +22,8 @@ shinyServer(
     d4.2 <- reactive({ data.frame(lax = msq[,input$index.X], lay=msq[,input$index.Y],rare=as.factor( msq$distout > d4.1() ) ) })
       
     #data for plot 5
-    m.aux<-reactive({metaMDS(msq[,msq.da],dist=input$dist5,k=2)$points})
-    mds2 <- reactive({data.frame(msq[,1:2], m.aux(), dist=msq$distout)})
+    d5.1  <- reactive({ subset(mdss, (d%in%input$dist5) & (k%in%input$k5))})
+    mds2 <- reactive({data.frame(msq[,1:2], d5.1(), dist=msq$distout)})
     #mds2$rare <-mds2$dist > q90
     d5 <-reactive({ data.frame(mds2(),sitecol=as.factor(msq$site==input$site5),yearcol=as.factor(msq$year==input$year5) )})
     # x <-  msq[,as.character(input$mds.color)]
@@ -81,32 +81,33 @@ shinyServer(
   
   
 
-# showSite <- function(x) {
-#   if (is.null(x)) return(NULL) 
-#   xx <- as.numeric(x)
-#   xx <- round(xx, 4)
-#   ss <-   mds2()[ round(mds2$MDS1,4) == xx[3] & round(mds2$MDS2,4) == xx[4],]
-#   paste0("<b>",'Site:',ss$site, "</b><br>",
-#          'Year:',ss$year, "<br>",
-#          'Distance:', round(ss$dist, 3)) 
-# }
-# 
+showSite <- function(x) {
+  if (is.null(x)) return(NULL) 
+  xx <- as.numeric(x)
+  xx <- round(xx, 4)
+  #ss <-   mds2[ round(mds2$MDS1,4) == xx[3] & round(mds2$MDS2,4) == xx[4],]
+  ss  <-  subset(mds2(),(round(MDS1,4)==xx[3] & round(MDS2,4) == xx[4]))
+  paste0("<b>",'Site:',ss$site, "</b><br>",
+         'Year:',ss$year, "<br>",
+         'Distance:', round(ss$dist, 3)) 
+}
+
 # aux <- data.frame(mds2(), sitecol= as.factor(msq$site ==  'Gvalley'),color.var=msq[,'Aedes.vexans'] )
 # aux2 <- subset(aux, color.var > 2524)
-# 
-# 
-# gv<- reactive({
-#  
-#   p <- ggvis(d5() , ~MDS1, ~MDS2, shape=~yearcol ,fill=~sitecol,fill.hover := "red", size.hover := 200 ) 
-#   p  %>% layer_points() %>%  add_tooltip(showSite) 
-# })
-# 
-#   gv <- bind_shiny(gv, "my_plot")
-#              
-  
-output$plot5 <- reactivePlot(function() {    
-  print( ggplot(data=d5(), aes(x=MDS1,y=MDS2))+geom_point(size=2))
+
+
+gv<- reactive({
+ 
+  p <- ggvis(d5() , ~MDS1, ~MDS2, shape=~yearcol ,fill=~sitecol,fill.hover := "red", size.hover := 200 ) 
+  p  %>% layer_points() %>%  add_tooltip(showSite) 
 })
+
+  gv <- bind_shiny(gv, "my_plot")
+             
+  
+# output$plot5 <- reactivePlot(function() {    
+#   print( ggplot(data=d5(), aes(x=MDS1,y=MDS2))+geom_point(size=2))
+# })
 
 output$plot6 <- reactivePlot(function() {    
   print( ggplot(data=d6(), aes(x=year,y=prop.geno))+geom_point(size=2)+geom_line(aes(color=site)) +facet_wrap(facets=~geno)

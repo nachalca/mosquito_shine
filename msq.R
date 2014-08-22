@@ -133,8 +133,10 @@ colnames(msq.long.aux)[3:4] <- c('specie', 'count')
 #msq.long.index <- ddply(.data=msq.long.aux,.variables=c('site','year'),function(x) cbind(x,prop.spst=x$count/sum(x$count)))
 #jaja           <- ddply(.data=msq.long,.variables='specie',function(x) mean(x$prop.spst,na.rm=TRUE))
 msq.long<-ddply(.data=msq.long.aux,.variables=c('site','year'),function(x) cbind(x,prop.spst=x$count/sum(x$count)))
+levels(msq.long$specie) <- gsub(levels(msq.long$specie), patter='.F', replace='')
 
-msq.long$specie <- with( msq.long, reorder(specie, V1, function(x) -sum(x,na.rm=T) ) )
+msq.long$specie <- with( msq.long, reorder(specie, count, function(x) -sum(x,na.rm=T) ) )
+
 
 write.csv(msq.long, file='shiny_msq/msq_long.csv', row.names=FALSE)
 #=======================================================

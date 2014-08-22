@@ -51,10 +51,15 @@ shinyUI(bootstrapPage(
                                      choices = unique(msq$year), 
                                      selected=NULL),
                          
+                         selectInput(inputId = "k5",
+                                     label = "Select dimension:",
+                                     choices = c("2", "3"), 
+                                     selected="2"),
+                         
                          selectInput(inputId = "dist5",
                                      label = "Select distance:",
                                      choices = c("euclidean", "canberra", "bray","jaccard","horn"), 
-                                     selected="euclidean")
+                                     selected="horn")
                          
           
                            ), 
@@ -88,7 +93,7 @@ shinyUI(bootstrapPage(
             tabPanel("Genotype-site",p(cap6), plotOutput("plot6"),value=6),
             #tabPanel("Location", plotOutput("plot2"),value=2), 
             tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"), plotOutput('plot_rf'),value=4),
-            tabPanel("MDS",p(cap5), plotOutput("plot5"),value=5),  
+            tabPanel("MDS",p(cap5), ggvisOutput("my_plot"),value=5),  
             id="conditionedPanels" )
         
             ) # close mainPanel
