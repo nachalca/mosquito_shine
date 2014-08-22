@@ -18,6 +18,7 @@ msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simp
 
 msq.long <- read.csv('msq_long.csv', header=T)
 mean.w<-read.csv('meanw.csv',header=T)
+mean.w$variable <- with(mean.w, reorder(variable, V1, function(x) -mean(x) ))
 
 # create subregion variable : match the county
 msq.long$secie2<-as.character(msq.long$specie)
@@ -60,16 +61,19 @@ cap4 <-'The right panel shows the density of the distance to the mean community,
 cap5<-'MDS for communities'
 cap6 <- 'Compare mosquito species across all years for several sites'
 cap7 <- 'Weekly count in logs for several sites'
+
 #density plot for rare communities id
 msq.sp <- colnames(msq)[-c(1:2, 39:52)]
 env   <- colnames(msq)[c(39:52)]
+
 # Compute species proportion on each site*year and the mid-community
 prop <- (msq[,msq.sp]) /apply(msq[,msq.sp],1,sum, na.rm=T)
 mid.comu <- apply(prop, 2, mean)
 dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean') ,nrow=161) 
 msq$distout <- dist.out[-161,161]
 dat.den<-density(c(-msq$distout,msq$distout),from=0)
-###MDS
+
+### MDS
 #mds2 <- read.csv('mdspoints.csv', header=T)
 
 # where are the mosquito columns? 
@@ -130,5 +134,4 @@ q90 <- quantile(prop2$distout, probs=.9)
 # rf.cont <- randomForest(distout ~ . -rare, data=rf.dat, importance=T)
 # varImpPlot(rf.cont , n.var=10, main='Variable importance for predicting Rare occurrence')
 # 
-# data.frame(round(cor(rf.dat[,-c(1,18)]),2))
-# 
+# data.frame(round(cor(rf.dat[,-c(1,18)]),2)) 

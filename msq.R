@@ -5,13 +5,14 @@ library(shiny)
 library(lubridate)
 library(reshape2)
 library(ggplot2)
+library(plyr)
+
 #runApp('shiny_msq')
 #runApp('shiny_example')
 #library(devtools)
 #devtools::install_github(c("hadley/testthat", "rstudio/shiny", "rstudio/ggvis"))
 
-library(reshape)
-library(plyr)
+
 #=========================================================
 #   WEEKLY DATA FOR 8 SITES
 
@@ -112,8 +113,10 @@ qplot(data=subset(d,variable=="Aedes.vexans.F"), x=week.lu, y=value,geom='boxplo
 
 mean.w<-ddply(d,.(location,week.lu,variable),function(x) mean(x$value,na.rm=TRUE))
 qplot(data=subset(mean.w,variable=="Psorophora.columbiae.F"), x=week.lu, y=V1,geom='line', facets=~location) + scale_y_log10()
-
 mean.w$location <- factor(mean.w$location)
+levels(mean.w$variable) <- gsub(levels(mean.w$variable), patter='.F', replace='')
+mean.w$variable <- with(mean.w, reorder(variable, V1, function(x) -mean(x) ))
+
 write.csv(mean.w,file='shiny_msq/meanw.csv',row.names=FALSE)
 
 #=========================================================
@@ -124,18 +127,16 @@ msq.res<-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simp
 msq.long$subregion <- msq.long$site
 levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
 
-msq.long.index<-ddply(.data=msq.long.aux,.variables=c('site','year'),function(x) cbind(x,prop.spst=x$count/sum(x$count)))
-
 msq.long.aux <- melt(msq[,1:38], id.vars=c('site', 'year') )
 colnames(msq.long.aux)[3:4] <- c('specie', 'count')
 
-
+#msq.long.index <- ddply(.data=msq.long.aux,.variables=c('site','year'),function(x) cbind(x,prop.spst=x$count/sum(x$count)))
+#jaja           <- ddply(.data=msq.long,.variables='specie',function(x) mean(x$prop.spst,na.rm=TRUE))
 msq.long<-ddply(.data=msq.long.aux,.variables=c('site','year'),function(x) cbind(x,prop.spst=x$count/sum(x$count)))
-jaja<-ddply(.data=msq.long,.variables='specie',function(x) mean(x$prop.spst,na.rm=TRUE))
+
+msq.long$specie <- with( msq.long, reorder(specie, V1, function(x) -sum(x,na.rm=T) ) )
 
 write.csv(msq.long, file='shiny_msq/msq_long.csv', row.names=FALSE)
-
-
 #=======================================================
 #=======================================================          
 
