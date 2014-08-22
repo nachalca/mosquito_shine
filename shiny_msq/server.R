@@ -20,9 +20,7 @@ shinyServer(
     # data for plot 4
     d4.1 <- reactive( { quantile(msq$distout, probs=input$q/100)} )
     d4.2 <- reactive({ data.frame(lax = msq[,input$index.X], lay=msq[,input$index.Y],rare=as.factor( msq$distout > d4.1() ) ) })
-    #d4.2 <- reactive({ msq[,c(input$index.X,input$index.Y)] })
-    #d4.3 <- reactive({ rare = as.numeric( msq$distout > d4.1() )   })
-    
+      
     #data for plot 5
     m.aux<-reactive({metaMDS(msq[,msq.da],dist=input$dist5,k=2)$points})
     mds2 <- reactive({data.frame(msq[,1:2], m.aux(), dist=msq$distout)})
@@ -33,10 +31,23 @@ shinyServer(
     
     # data for plot 6
     d6  <- reactive({ subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
-    
     d7  <-reactive({subset(mean.w,(variable%in%input$specie7)&(location%in%input$site7))})
     
+    
+    # random forest for explining rare occurrence 
+    
+     rf.dat <- reactive({ data.frame(msq,rare=as.factor( msq$distout > d4.1() ) ) })
+    # rf.geno<-dcast(msq.geno,year+site~geno)
+    # rf.dat<-merge(rf.dat,rf.geno,by=c('site','year'))
+    # rf.dat$rare<-as.factor(rf.dat$rare)
+    library(randomForest) 
+    rf <- reactive({ randomForest(rare ~ . -distout, data=rf.dat(), importance=T) })
+        
     #==============================================
+    output$plot_rf <- reactivePlot(function() {    
+    varImpPlot(rf(), n.var=10, main='Variable importance for predicting Rare occurrence') 
+    })
+    
   output$plot1 <- reactivePlot(function() {    
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
            + scale_x_continuous("Year") +scale_y_continuous("Proportion of specie"))
