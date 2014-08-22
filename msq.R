@@ -151,21 +151,17 @@ msq<- read.csv('msqdata.csv', header=T)
 msq.sp <- msq[-c(1:2, 39:53)]
 metaMDS(msq.sp, distance = "euclidean",k=3)
 
-f1<-function(k,d){
-converge<-FALSE; t<-100
-  while(converge==FALSE & t<=1000){
+f1<-function(k,d,t){
   aux<-metaMDS(msq.sp, distance=d,k=k,autotransform=FALSE, trymax=t) 
-  converge<-aux$converged
-  t<-t+100
-  }
 data.frame(stress=aux$stress,conv=aux$converged,aux$points)
 }
 
-dis.aux<-expand.grid(d=c("euclidean","canberra", "bray", "jaccard", "horn"),k=2:3)
+#expand grid with thre levels distance, dimensions and size of the run.
+dis.aux<-expand.grid(d=c("euclidean","canberra", "bray", "jaccard", "horn"),k=2:3,t=c(50,100,200,500))
 dis.aux[,1]<-as.character(dis.aux[,1])
 
 mdss<-mdply(dis.aux,f1)
-
+write.csv(mdss, file='mdss.csv')
 # distances are all the same, I think is because there are many 
 # species with very small abundance and only a few species 
 # with very high one
