@@ -11,7 +11,8 @@ shinyUI(bootstrapPage(
                      #checkboxGroupInput(inputId = "specie",
                      #     label = "Select specie:",
                      #    choices = levels(msq.long$specie),selected='Aedes.albopictus'),
-                    selectInput(inputId = "specie",
+
+                     selectInput(inputId = "specie",
                             label = "Select specie:",
                             choices = levels(msq.long$specie),selected='Aedes.vexans'),
      
@@ -69,12 +70,12 @@ shinyUI(bootstrapPage(
           ),
          conditionalPanel(condition="input.conditionedPanels==7",
                           img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300),                            
-                          checkboxGroupInput(inputId = "specie7",
-                                             label = "Select specie:",
-                                             choices = levels(mean.w$variable),selected='Aedes.vexans.F'),
                           checkboxGroupInput(inputId = "site7",
                                              label = "Select site:",
-                                             choices = levels(mean.w$location),selected="PK-Ewing")
+                                             choices = levels(mean.w$location),selected="PK-Ewing"),
+                          checkboxGroupInput(inputId = "specie7",
+                                             label = "Select specie:",
+                                             choices = levels(mean.w$variable),selected='Aedes.vexans')
          )
           
           
@@ -82,13 +83,12 @@ shinyUI(bootstrapPage(
   
     mainPanel(
         tabsetPanel(
+            tabPanel("Week",p(cap7),plotOutput("plot7"),value=7),
             tabPanel("Species-site",p(cap1), plotOutput("plot1"),tableOutput("tab1"),p(cap1.1),value=1),    
             tabPanel("Genotype-site",p(cap6), plotOutput("plot6"),value=6),
-            tabPanel("Location", plotOutput("plot2"),value=2), 
+            #tabPanel("Location", plotOutput("plot2"),value=2), 
             tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"),value=4),
-            tabPanel("MDS",p(cap5), plotOutput("plot5"),value=5),
-            tabPanel("Week",p(cap7), plotOutput("plot7"),value=7),
-            
+            tabPanel("MDS",p(cap5), plotOutput("plot5"),value=5),  
             id="conditionedPanels" )
         
             ) # close mainPanel

@@ -15,7 +15,7 @@ shinyServer(
     d1.1  <- reactive({ subset(d.aux, (specie %in%input$specie) & (site%in%input$site)) })
     
     # data for plot 2
-    d2 <- reactive( { subset(msq.ia, specie %in% input$specie2) } )
+    #d2 <- reactive( { subset(msq.ia, specie %in% input$specie2) } )
       
     # data for plot 4
     d4.1 <- reactive( { quantile(msq$distout, probs=input$q/100)} )
@@ -46,18 +46,19 @@ shinyServer(
    })
 
   output$cap1<-renderText({'description of plot'})   
-  output$plot2 <- reactivePlot(function() {        
-    ggplot() + geom_polygon(data=ia.c, aes(x=long,y=lat,group=group) )
-  
-    p <- ggplot() + geom_polygon(data=d2(), aes(x=long,y=lat,group=group, order=order, fill=((prop.spst-prop.spyr)/prop.spyr) ) ) +
-       theme_bw() + theme(axis.text=element_blank(), axis.title=element_blank(),
-                       axis.line=element_blank(),
-                       axis.ticks=element_blank(),
-                       panel.border=element_blank(),
-                       panel.grid=element_blank(),
-                       aspect.ratio=1/1.5)
-  print(p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) + scale_fill_gradient2( low='black', high='red') + theme(legend.title=element_blank()) ) 
-  })
+#   output$plot2 <- reactivePlot(function() {        
+#      ggplot() + geom_polygon(data=ia.c, aes(x=long,y=lat,group=group) )
+#   
+#     p <- ggplot() + geom_polygon(data=msq.ia, aes(x=long,y=lat,group=group, order=order ) ) + #, fill=((prop.spst-prop.spyr)/prop.spyr)
+#        theme_bw() + theme(axis.text=element_blank(), axis.title=element_blank(),
+#                        axis.line=element_blank(),
+#                        axis.ticks=element_blank(),
+#                        panel.border=element_blank(),
+#                        panel.grid=element_blank(),
+#                        aspect.ratio=1/1.5) 
+#     print(p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ))
+#    print(p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + facet_wrap(~specie) + scale_fill_gradient2( low='black', high='red') + theme(legend.title=element_blank()) ) 
+#  })
   
     output$plot4 <- renderPlot({
       p1 <- qplot(x=dat.den$x, y=dat.den$y,geom='line',size=I(1.5)) + 
@@ -96,15 +97,15 @@ output$plot5 <- reactivePlot(function() {
   print( ggplot(data=d5(), aes(x=MDS1,y=MDS2))+geom_point(size=2))
 })
 
-
-
 output$plot6 <- reactivePlot(function() {    
   print( ggplot(data=d6(), aes(x=year,y=prop.geno))+geom_point(size=2)+geom_line(aes(color=site)) +facet_wrap(facets=~geno)
          + scale_x_continuous("Year") +scale_y_continuous("Proportion of geno"))
 })
  
 output$plot7 <- reactivePlot(function() {    
+  
   print(qplot(data=d7(), x=week.lu, y=V1, color=variable, geom=c('point','line'), facets=~location) + scale_y_log10() )
+
 #  print( ggplot(data=d7(), aes(x=week.lu,y=V1))+geom_line() +facet_wrap(facets=~location)
 #         + scale_x_continuous("Week") +scale_y_continuous("Mosquito count"))+scale_y_log10()
 })
