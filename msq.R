@@ -150,20 +150,29 @@ library(vegan)
 # load data sets we use
 #setwd("/Users/nataliadasilva//Documents/mosquito_shine/shiny_msq")
 msq<- read.csv('msqdata.csv', header=T)
+
 msq.sp <- msq[-c(1:2, 39:53)]
-metaMDS(msq.sp, distance = "euclidean",k=3)
+prop <- msq.sp /apply(msq.sp,1,sum, na.rm=T)
+
+
+metaMDS(msq.sp, distance = "bray",trymax=50,k=50,trace=0)
 
 f1<-function(k,d,t){
-  aux<-metaMDS(msq.sp, distance=d,k=k,autotransform=FALSE, trymax=t) 
-data.frame(stress=aux$stress,conv=aux$converged,aux$points)
+  if (d!='euclidean') aux <- metaMDS(msq.sp, distance=d,k=k,autotransform=FALSE, trymax=t,trace=0)
+  if (d=='euclidean') aux <- metaMDS(prop, distance=d,k=k,autotransform=FALSE, trymax=t,trace=0)
+  data.frame(stress=aux$stress,conv=aux$converged,aux$points)
 }
 
 #expand grid with thre levels distance, dimensions and size of the run.
-dis.aux<-expand.grid(d=c("euclidean","canberra", "bray", "jaccard", "horn"),k=2:3,t=c(50,100,200,500))
+dis.aux<-expand.grid(d=c("euclidean","canberra", "bray", "jaccard", "horn"),k=2:10,t=c(50,100,200,500))
 dis.aux[,1]<-as.character(dis.aux[,1])
 
-mdss<-mdply(dis.aux,f1)
-write.csv(mdss, file='mdss.csv')
+mdss<-mdply(dis.aux,f1,.progress='text')
+write.csv(mdss, file='mdss.csv', row.names=FALSE)
+
+mds.summ <- ddply(mdss, .(d,k,t), summarise, stress=mean(stress), conv = mean(conv))
+qplot(data=mds.summ,t,stress, color=as.factor(conv), facets=d~k )
+
 # distances are all the same, I think is because there are many 
 # species with very small abundance and only a few species 
 # with very high one

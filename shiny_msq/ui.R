@@ -31,7 +31,21 @@ shinyUI(bootstrapPage(
           conditionalPanel(condition="input.conditionedPanels==4",
                            img(src="Mosquito_da_Dengue_by_Lukemaciel.png", height = 100, width = 300), 
                            sliderInput("q", "Quantile", 
-                                       min=0, max=100, value=90,step=1),
+                                       min=50, max=100, value=90,step=1),
+                           selectInput(inputId = "k4",
+                                       label = "Select dimension:",
+                                       choices = c("2", "3",'4','5','6','7','8','9','10'), 
+                                       selected="2"),
+                           
+                           selectInput(inputId = "s4",
+                                       label = "Select dimension:",
+                                       choices = c("50", "100",'200','500'), 
+                                       selected="2"),
+                           
+                           selectInput(inputId = "dist4",
+                                       label = "Select distance:",
+                                       choices = c("euclidean", "canberra", "bray","jaccard","horn"), 
+                                       selected="horn"),   
             selectInput(inputId = "index.X",
                          label = "Select x axis variable",
                          choices = lab.index,selected='PrecipationExact'),
@@ -53,7 +67,12 @@ shinyUI(bootstrapPage(
                          
                          selectInput(inputId = "k5",
                                      label = "Select dimension:",
-                                     choices = c("2", "3"), 
+                                     choices = c("2", "3",'4','5','6','7','8','9','10'), 
+                                     selected="2"),
+                         
+                         selectInput(inputId = "s5",
+                                     label = "Select dimension:",
+                                     choices = c("50", "100",'200','500'), 
                                      selected="2"),
                          
                          selectInput(inputId = "dist5",

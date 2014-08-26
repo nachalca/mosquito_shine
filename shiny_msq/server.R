@@ -18,12 +18,16 @@ shinyServer(
     #d2 <- reactive( { subset(msq.ia, specie %in% input$specie2) } )
       
     # data for plot 4
-    d4.1 <- reactive( { quantile(msq$distout, probs=input$q/100)} )
-    d4.2 <- reactive({ data.frame(lax = msq[,input$index.X], lay=msq[,input$index.Y],rare=as.factor( msq$distout > d4.1() ) ) })
-      
+    d4.0  <- reactive({ subset(dist.out, (d%in%input$dist4) & (k%in%input$k4) & (t%in%input$s4) )})
+    
+    d4.1 <- reactive( { with(d4.0(),quantile(distout, probs=input$q/100))} )
+    d4.2 <- reactive({ data.frame(lax = msq[,input$index.X], lay=msq[,input$index.Y],rare=with(d4.0(),as.factor(distout > d4.1() ) )) })
+    d4.3  <-reactive({with(d4.0(),density(c(-distout,distout),from=0))})
     #data for plot 5
-    d5.1  <- reactive({ subset(mdss, (d%in%input$dist5) & (k%in%input$k5))})
-    mds2 <- reactive({data.frame(msq[,1:2], d5.1(), dist=msq$distout)})
+    d5.0  <-reactive({ subset(dist.out, (d%in%input$dist5) & (k%in%input$k5) & (t%in%input$s5) )})
+    d5.1  <- reactive({ subset(mdss, (d%in%input$dist5) & (k%in%input$k5) & t%in%input$s5) })
+    
+    mds2 <- reactive({data.frame(msq[,1:2], d5.1(), dist=with(d5.0(),distout))})
     #mds2$rare <-mds2$dist > q90
     d5 <-reactive({ data.frame(mds2(),sitecol=as.factor(msq$site==input$site5),yearcol=as.factor(msq$year==input$year5) )})
     # x <-  msq[,as.character(input$mds.color)]
@@ -36,12 +40,12 @@ shinyServer(
     
     # random forest for explining rare occurrence 
     
-     rf.dat <- reactive({ data.frame(msq,rare=as.factor( msq$distout > d4.1() ) ) })
+     rf.dat <- reactive({ data.frame(msq,rare=with(d4.0(),  as.factor( distout> d4.1() ) )) })
     # rf.geno<-dcast(msq.geno,year+site~geno)
     # rf.dat<-merge(rf.dat,rf.geno,by=c('site','year'))
     # rf.dat$rare<-as.factor(rf.dat$rare)
     library(randomForest) 
-    rf <- reactive({ randomForest(rare ~ . -distout, data=rf.dat(), importance=T) })
+    rf <- reactive({ randomForest(rare ~ . , data=rf.dat(), importance=T) })
         
     #==============================================
     output$plot_rf <- reactivePlot(function() {    
@@ -72,7 +76,7 @@ shinyServer(
 #  })
   
     output$plot4 <- renderPlot({
-      p1 <- qplot(x=dat.den$x, y=dat.den$y,geom='line',size=I(1.5)) + 
+      p1 <- qplot(x=with(d4.3(),x), y=with(d4.3(),y),geom='line',size=I(1.5)) + 
         geom_vline(xintercept=d4.1(),color=I('red')) + ylab('') + xlab('Distance to Average Community')
       p2 <- qplot(data=d4.2(), lax,lay, color=rare)  + scale_color_manual(values=c('black', 'red')) +
             xlab(as.character(input$index.X)) + ylab(as.character(input$index.Y)) + theme(legend.position='bottom')
@@ -86,10 +90,13 @@ showSite <- function(x) {
   xx <- as.numeric(x)
   xx <- round(xx, 4)
   #ss <-   mds2[ round(mds2$MDS1,4) == xx[3] & round(mds2$MDS2,4) == xx[4],]
-  ss  <-  subset(mds2(),(round(MDS1,4)==xx[3] & round(MDS2,4) == xx[4]))
-  paste0("<b>",'Site:',ss$site, "</b><br>",
-         'Year:',ss$year, "<br>",
-         'Distance:', round(ss$dist, 3)) 
+  
+  ss  <-  subset(mds2(), round(MDS1,4)==xx[3] & round(MDS2,4) == xx[4]) 
+  #if (input$k5==3) ss  <-  subset(mds2(), round(MDS1,4)==xx[3] & round(MDS2,4) == xx[4]  
+  paste0("<b>",'Site:',with(ss,site), "</b><br>",
+         'Year:',with(ss,year), "<br>",
+         'Distance:', round(with(ss,dist), 3)) 
+  
 }
 
 # aux <- data.frame(mds2(), sitecol= as.factor(msq$site ==  'Gvalley'),color.var=msq[,'Aedes.vexans'] )

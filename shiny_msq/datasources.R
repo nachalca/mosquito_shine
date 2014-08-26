@@ -20,6 +20,9 @@ msq.long <- read.csv('msq_long.csv', header=T)
 mean.w<-read.csv('meanw.csv',header=T)
 mean.w$variable <- with(mean.w, reorder(variable, V1, function(x) -mean(x) ))
 
+mdss <- read.csv('mdss.csv', header=T)
+
+
 # create subregion variable : match the county
 msq.long$secie2<-as.character(msq.long$specie)
 msq.long$subregion <- msq.long$site
@@ -68,10 +71,23 @@ env   <- colnames(msq)[c(39:52)]
 
 # Compute species proportion on each site*year and the mid-community
 prop <- (msq[,msq.sp]) /apply(msq[,msq.sp],1,sum, na.rm=T)
-mid.comu <- apply(prop, 2, mean)
-dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean') ,nrow=161) 
-msq$distout <- dist.out[-161,161]
-dat.den<-density(c(-msq$distout,msq$distout),from=0)
+
+mid.comu <- ddply(mdss,.(d,k,t), function(x) apply(x[,-c(1:5)],2,mean,na.rm=T))
+
+v.dis<-function(dat1){ 
+  n<-dim(dat1)[1]
+  data.frame(distout = as.matrix(vegdist(dat1,method='euclidean',na.rm=T),nrow=n)[-n,n])
+}
+
+#dat1<-subset(rbind(mdss[,-c(4:5)],mid.comu),d=='euclidean'& t==50&k==2)
+
+
+dist.out<-ddply(rbind(mdss[,-c(4:5)],mid.comu),.(d,k,t), v.dis)
+
+#qplot(data=subset(dist.out,t==100),x= distout,color=d,geom='density',facets=~k)
+#dist.out <- as.matrix(vegdist( rbind(mdss[,-c(1:5)],mid.comu),dist='euclidean') ,nrow=dim(mdss)[1]+1 )
+#msq$distout <- dist.out[-161,161]
+#dat.den<-density(c(-msq$distout,msq$distout),from=0)
 
 ### MDS
 #mds2 <- read.csv('mdspoints.csv', header=T)
@@ -81,17 +97,17 @@ msq.da <- colnames(msq)[-c(1:2, 39:53)]
 env <- colnames(msq)[c(39:52)]
 
 # Compute species proportion on each site*year and the mid-community
-prop <- (msq[,msq.da]) /apply(msq[,msq.da],1,sum, na.rm=T)
-mid.comu <- apply(prop, 2, mean)
+#prop <- (msq[,msq.da]) /apply(msq[,msq.da],1,sum, na.rm=T)
+#mid.comu <- apply(prop, 2, mean)
 
 # compute distance from each site*year to the mid-community
-dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean' ) ,nrow=161) 
-msq$distout <- dist.out[-161,161]
-prop2 <- cbind(msq[,c('year','site', env, 'distout')], prop )
+#dist.out <- as.matrix(vegdist( rbind(prop,mid.comu),dist='euclidean' ) ,nrow=161) 
+#msq$distout <- dist.out[-161,161]
+#prop2 <- cbind(msq[,c('year','site', env, 'distout')], prop )
 
 # compute quantiles for that distancs, Q90 is the cutoff 
-qs  <- round(quantile(prop2$distout, probs=seq(0,1,.1)),3)
-q90 <- quantile(prop2$distout, probs=.9) 
+#qs  <- round(quantile(prop2$distout, probs=seq(0,1,.1)),3)
+#q90 <- quantile(prop2$distout, probs=.9) 
 #mds2$rare <- mds2$dist > q90
 #write.csv(mds2, 'mdscc.csv', row.names=F)
 #save(mds1, file='mds_k3euc.Rdata')           
