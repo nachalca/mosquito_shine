@@ -38,7 +38,7 @@ shinyUI(bootstrapPage(
                                        selected="2"),
                            
                            selectInput(inputId = "s4",
-                                       label = "Select dimension:",
+                                       label = "Select Max.number of random starts:",
                                        choices = c("50", "100",'200','500'), 
                                        selected="2"),
                            
@@ -71,7 +71,7 @@ shinyUI(bootstrapPage(
                                      selected="2"),
                          
                          selectInput(inputId = "s5",
-                                     label = "Select dimension:",
+                                     label = "Select Select Max.number of random starts:",
                                      choices = c("50", "100",'200','500'), 
                                      selected="2"),
                          
