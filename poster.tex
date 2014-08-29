@@ -1,0 +1,442 @@
+\documentclass[final]{beamer}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage[scale=1.24]{beamerposter}
+\usepackage{graphicx}      % allows us to import images
+\usepackage{subcaption}
+\usepackage{fancybox}
+%%%%%%%%%%%%%
+\usepackage{natbib}
+\bibpunct{(}{)}{;}{a}{}{,} 
+\usepackage{textpos}
+\usepackage{lipsum}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,hooks}
+\usetikzlibrary{shadows}
+\tcbset{colframe=structure,fonttitle=\bfseries,beamer}
+
+
+%%%%%%%%%%%%%
+
+%-----------------------------------------------------------
+% Define the column width and poster size
+% To set effective sepwid, onecolwid and twocolwid values, first choose how many columns you want and how much separation you want between columns
+% The separation I chose is 0.024 and I want 4 columns
+% Then set onecolwid to be (1-(4+1)*0.024)/4 = 0.22
+% Set twocolwid to be 2*onecolwid + sepwid = 0.464
+%-----------------------------------------------------------
+
+\newlength{\sepwid}
+\newlength{\onecolwid}
+\newlength{\twocolwid}
+\newlength{\threecolwid}
+\setlength{\paperwidth}{48in}
+\setlength{\paperheight}{36in}
+\setlength{\sepwid}{0.024\paperwidth}
+\setlength{\onecolwid}{0.30\paperwidth}
+\setlength{\twocolwid}{0.624\paperwidth}
+\setlength{\threecolwid}{0.924\paperwidth}
+\setlength{\topmargin}{-0.5in}
+%\usetheme{TUGraz}
+\usetheme{confposter}
+%\usetheme{AAU}
+%\usetheme{Berlin}
+\usepackage{exscale}
+%-----------------------------------------------------------
+% The next part fixes a problem with figure numbering. Thanks Nishan!
+% When including a figure in your poster, be sure that the commands are typed in the following order:
+% \begin{figure}
+% \includegraphics[...]{...}
+% \caption{...}
+% \end{figure}
+% That is, put the \caption after the \includegraphics
+%-----------------------------------------------------------
+
+\usecaptiontemplate{
+\small
+\structure{\insertcaptionname~\insertcaptionnumber:}
+\insertcaption}
+
+%-----------------------------------------------------------
+% Define colours (see beamerthemeconfposter.sty to change these colour definitions)
+%-----------------------------------------------------------
+% \setbeamercolor{frametitle headline}{fg=white}
+% \setbeamercolor{institute in headline}{fg=white}
+% \setbeamercolor{author in headline}{fg=white}
+% \setbeamercolor{title in headline}{fg=white}
+
+
+\definecolor{bordo}{RGB}{153,24,44}
+\definecolor{firebrick}{RGB}{178,34,34}
+\definecolor{engred}{RGB}{204,17,0}
+
+
+%\setbeamercolor{block title}{fg=white,bg=dred!120}
+%\setbeamercolor{block body}{fg=white, bg=dblue!30}
+
+\setbeamercolor{block alerted title}{fg=firebrick,bg=black}
+\setbeamercolor{block alerted body}{fg=black,bg=white}
+
+\setbeamercolor{postit}{fg=white,bg=dgreen!50}
+\setbeamercolor{box.te}{fg=white,bg=dblue!60}
+\setbeamercolor{box.ti}{fg=black,bg=engred}
+
+% \setbeamercolor{alerted text}{fg=blue}
+% \setbeamercolor{background canvas}{bg=white}
+% \setbeamercolor{block body alerted}{bg=normal text.bg!90!blue}
+% \setbeamercolor{block body}{bg=normal text.bg!90!blue}
+% \setbeamercolor{block body example}{bg=normal text.bg!90!blue}
+% \setbeamercolor{block title alerted}{use={normal text,alerted text},fg=alerted text.fg!75!normal text.fg,bg=normal text.bg!75!blue}
+% \setbeamercolor{block title}{bg=blue}
+% \setbeamercolor{block title example}{use={normal text,example text},fg=example text.fg!75!normal text.fg,bg=normal text.bg!75!blue}
+% \setbeamercolor{fine separation line}{}
+% \setbeamercolor{frametitle}{fg=brown}
+% \setbeamercolor{item projected}{fg=blue}
+% \setbeamercolor{normal text}{bg=blue,fg=yellow}
+% \setbeamercolor{palette sidebar primary}{use=normal text,fg=normal text.fg}
+% \setbeamercolor{palette sidebar quaternary}{use=structure,fg=structure.fg}
+% \setbeamercolor{palette sidebar secondary}{use=structure,fg=structure.fg}
+% \setbeamercolor{palette sidebar tertiary}{use=normal text,fg=normal text.fg}
+% \setbeamercolor{section in sidebar}{fg=brown}
+% \setbeamercolor{section in sidebar shaded}{fg= grey}
+% \setbeamercolor{separation line}{}
+% \setbeamercolor{sidebar}{bg=red}
+% \setbeamercolor{sidebar}{parent=palette primary}
+% \setbeamercolor{structure}{bg=blue, fg=green}
+% \setbeamercolor{subsection in sidebar}{fg=brown}
+% \setbeamercolor{subsection in sidebar shaded}{fg= grey}
+%\usebackgroundtemplate{bg=white}
+%\setbeamercolor{title}{fg=white}
+%\setbeamercolor{titlelike}{fg=white}
+%\setbeamertemplate{background}{\includegraphics[width=\paperwidth, height=\paperheight]{figure/pp.jpg}}
+%\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamercolor{enumerate item}{fg=firebrick}
+\setbeamercolor{local structure}{fg=firebrick}
+\setbeamercolor{item projected}{bg=firebrick}
+%\setbeamertemplate{background canvas}[vertical shading][bottom=bordo!40!black,top=structure.fg!25]
+%\setbeamertemplate{sidebar canvas left}[horizontal shading][left=white!40!black,right=black]
+
+
+%-----------------------------------------------------------
+% Name and authors of poster/paper/research
+%-----------------------------------------------------------
+% \addtobeamertemplate{frametitle}{}
+\usepackage{tcolorbox}
+\setbeamertemplate{headline}{
+\leavevmode
+ \begin{columns}
+  \begin{column}{\linewidth}
+   \vskip1cm
+   \centering
+\usebeamercolor{title in headline}{\color{firebrick}\fontsize{100}{120}{\textbf{\inserttitle}}\\[0.5ex]}
+   \usebeamercolor{author in headline}{\color{fg}\Large{\insertauthor}\\[1ex]}
+   \usebeamercolor{institute in headline}{\color{fg}\large{\insertinstitute}\\[1ex]}
+   \vskip1cm
+  \end{column}
+  \vspace{1cm}
+ \end{columns}
+
+\vspace{0.5in}
+\hspace{0.5in}\begin{beamercolorbox}[wd=47in,colsep=0.15cm]{box.ti}\end{beamercolorbox}
+\vspace{0.1in}
+}
+
+\title{Twenty Year Ecological Analyses of Adult Mosquito Communities in Iowa}
+\author{Ignacio Alvarez \and Natalia da Silva \and Mike Dunbar}
+\institute{Department of Statistics and Department of Entomology, Iowa State University}
+%\leftcorner{\includegraphics[height=1cm,width=10cm]{figure/comunidad}}
+
+%-----------------------------------------------------------
+% Start the poster itself
+%-----------------------------------------------------------
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+\begin{document}
+\begin{frame}
+    \begin{columns}[t,totalwidth=\threecolwid] % Biggest columsn frame, 3 columns is the entire poster
+        \begin{column}{\onecolwid} % Column 1: Intro, data, explration
+
+
+
+
+\begin{alertblock}{Introduction}
+Species do not exist alone in a black box and therefore must interact with other species and the environment.  The objectives of this study were to characterize mosquitoes at the community level over a multi-year period and identify communities with rare composition, a regionally relevant vector species.  Ecological indices, including abundance, species richness, and various measures of diversity, were calculated to revealdifferences among common and rare communities.  Differences in abiotic factors such as precipitation and degree day accumulation were also used for comparison among mosquito communities.  Observing communities of sympatric species may reveal population dynamics tterns that could not be explained by observations of a single species, describing sympatric species interactions could better inform vector management decision making.
+
+\begin{beamercolorbox}{box.ti}
+Goals of the study
+\end{beamercolorbox}
+- Identifiy rare communities
+- Understand what key variables for explain "rareness"
+- Create web-aplication 
+\end{alertblock}
+
+\begin{alertblock}{ A first look of the data }
+Mosquito population dynamics have been monitored annually since 1969, at numerous sites across the state of Iowa. The traps used have run on a daily basis from late spring through early fall. Eight of these trapping sites were chosen for ecological and statistical analyses based on the availability of 20 years of unbroken data (1994 to 2013). During this 20 year period, over 385,000 specimens of 36 species were trapped and identified. The objective of this study was to use these data to characterize mosquito population dynamics and interactions over the course of 2 decades.
+
+\begin{beamercolorbox}{box.ti}
+Locations 
+\end{beamercolorbox}
+
+- wtire down the 8 locations 
+- plot a map
+
+\begin{beamercolorbox}{box.ti}
+Species composition
+\end{beamercolorbox}
+- vexan most abundant, pippens most dangerous (?) 
+
+% \begin{figure}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=\maxwidth]{figure/plot1} 
+
+\end{knitrout}
+
+% \end{figure}
+
+- plot proportions on different locations
+\end{alertblock}
+
+
+\begin{alertblock}{ Aknolegment (?) }
+
+\end{alertblock}
+
+\end{column}  % end of left  column (intro and data stuff)
+
+\begin{column}{1cm}\end{column}      % empty spacer column
+
+
+  \begin{column}{\twocolwid}
+
+      \begin{alertblock}{ Identifiying rare comunities }
+        algo 
+      \end{alertblock}
+
+      \begin{alertblock}{ Interactive statistical tools }
+          algo mas 
+      \end{alertblock}
+
+      \begin{block}
+      
+        \begin{columns}[t,totalwidth=0.99\twocolwid ]
+            
+        \begin{column}{0.7\twocolwid}
+              \begin{alertblock}{Summary of findings}
+                    otro poquito
+                \end{alertblock}
+        \end{column}
+
+        \begin{column}{0.5cm}\end{column}      % empty spacer column
+        
+        \begin{column}{0.3\twocolwid} 
+              \begin{alertblock}{References}
+                  la del estribo
+              \end{alertblock}
+        \end{column}
+        
+        \end{columns}
+      \end{block}
+
+
+\end{column}
+
+
+\end{columns}
+\end{frame}
+\end{document}
+%============================================================================
+\begin{column}{1.05\onecolwid}
+      \begin{alertblock}{Prior simulation study}
+      In all cases the implicit marginal distribution for correlations is a uniform distribution. Using as a reference the $IW$ prior with the non-informative values for the parameters, and we set the parameters for the rest of the priors to match the median of the variance in $IW$.  
+        \begin{columns}[t,totalwidth=\onecolwid]
+%   \begin{tabular}{ l|c}
+%    \hline
+%       Prior    &  Parameter Values \\ \hline
+%   $IW(\nu, \Lambda)$ &   $\nu=d+1$, $\Lambda=I_d$ \\ 
+%   $SIW((\nu, \Lambda, b, \delta))$  & $b=0$, $\delta_i =1$,  $\nu_0= d + 1$, $\Lambda = 0.8I_d$ \\
+%   $HIW_{ht}(\nu, \delta)$    &  $\nu=2$,  $\delta_i=1.04$ \\
+%    $BMM_{mu}(\nu,,b,\delta)$   &  $\nu=d+1$, $b_i=log(.72)/2$ , $\delta_i=1$ \\ \hline
+%    \end{tabular}
+
+\begin{column}{7in}
+\begin{beamercolorbox}{box.ti}
+Samples from joint distribution $p(\rho,\sigma_1)$
+\end{beamercolorbox}
+\begin{figure}[htbp]
+\begin{center}
+ \includegraphics{priorsim2d} 
+ \vspace{-.2in}
+\caption{Scatterplot of prior samples, correlation coefficient and standard deviation of the first component. $IW$ prior: when $\sigma_1$ is close to 1 correlation vary freely across -1 to 1, when $\sigma_1$ get small the range for $\rho$ shrink towards zero, when $\sigma_1$ is large correlation is also large on absolute value.}
+\end{center}
+\end{figure}
+\end{column}
+
+\begin{column}{7in}
+\begin{beamercolorbox}{box.ti}
+Samples from joint distribution $p(\sigma_1, \sigma_2)$
+\end{beamercolorbox}
+\begin{figure}[htbp]
+\begin{center}
+ \includegraphics[width=\textwidth ]{prior_sis2} 
+  \vspace{-.2in}
+\caption{Scatter-plot of prior samples, relationship among the standard deviation for the first two components (both in log base ten scale). $IW$ prior imply a positive relationship among the standard deviations. Also large correlations values appear the two variance are high and low.} 
+\end{center}
+\end{figure}
+\end{column}
+
+\end{columns}
+\end{alertblock}
+
+\begin{alertblock}{Correlation among birds}
+The number of Ovenbird seem to increase until 2002 when they reach its maximum count and decrease since that year, a similar pattern is suggested for Chestnut-Sided Warbler and Red-eyed Vireo. White-thoreated Sparrow and Nashville Warbler shows an increasing pattern over all the period, and the other species shows a constant pattern. 
+        \begin{columns}[t,totalwidth=\onecolwid]
+          \begin{column}{7in}
+%             \begin{figure}[hbpt]
+%             \centering
+%             \includegraphics{rawtrend}
+%             \vspace{-.2in}
+%             \caption{ Species yearly total birds counts .}
+%             \end{figure}
+         \end{column}
+
+        \begin{column}{7in}
+%           \begin{figure}[htbp]
+%           \begin{center}
+%           \includegraphics{rescor} 
+%           \vspace{-.2in}
+%           \caption{Correlations posterior mean against the Pearson correlation coefficient.}
+%           \end{center}
+%           \end{figure}
+        \end{column}
+    \end{columns}
+Using average count as response, $IW$ shrunk correlations towards 0. Results change if we decide to use a response with high variance as the total count. 
+  \end{alertblock}
+
+\begin{alertblock}{References}
+  \bibliographystyle{asa}      
+\small{  \bibliography{report_year} }
+\end{alertblock}
+\end{column} % close middle column
+
+\begin{column}{1cm}\end{column}      % empty spacer column
+
+\begin{column}{1.15\onecolwid}
+\begin{alertblock}{Impact on the posterior inference}
+\begin{table}[htbp]
+   \caption{Simulation scenarios. Specific values used in simulations for each parameter. \label{scen}} 
+     \begin{tabular}{lcc} \hline
+          &  Bivariate    & Ten-dimensional  \\ \hline
+      Sample size   ($n$)   & 10,50,250   &  10,50  \\
+      Standard deviation ($\sigma$)  & 0.01, 0.1, 1, 10, 100 & 0.1, 1, 100 \\
+      Correlation ($\rho$)   &  0, 0,25, 0.5, 0.75, 0.99  &  0, 0.99 \\ \hline
+   \end{tabular}
+\end{table}
+
+\begin{columns}
+\begin{column}{7in}
+% \begin{figure}[hbtp]
+%    \centering
+%    \includegraphics{fig_rho_d2} 
+%     \vspace{-.5in}
+%    \caption{Scatter-plot of posterior mean for $\rho$  against correlation true correlation.} 
+% \end{figure}
+\end{column}
+
+\begin{column}{7in}
+% \begin{figure}[htbp]
+%    \centering
+%    \includegraphics{fig_s1_d2} 
+%     \vspace{-.5in}
+%    \caption{Scatter-plot of posterior mean for $\sigma_1$  against correlation true standard deviation.}
+% \end{figure}
+\end{column}
+\end{columns}
+\end{alertblock}
+
+\begin{alertblock}{Prescaling your data}
+If the $IW$ is the only prior available and the variability in the data is low it is better to re-scale the data. Similar to $SIW$, here $\Sigma = DQD$ where D is a diagonal matrix with the sample standard deviations and $Q\sim IW(\nu, \Lambda)$. 
+
+\begin{columns}
+\begin{column}{7in}
+Figure on the right illustrates this solution. It shows the inference for correlation coefficient on the re-scaled data set when variance is very low (On the data sets with small scale, $\sigma=0.01$ and $\sigma=0.1$) the cases with larger variances the results are the same than using unscaled data. Each column represents a sample size and the rows are dimension size. 
+\end{column}
+\begin{column}{7in}
+% \begin{figure}[htbp]
+%    \centering
+%    \includegraphics{scIW} % requires the graphicx package
+% %    \vspace{-.5in}
+% %   \caption{Scaled data with IW prior results. Scatterplot of posterior mean for $\rho$  against correlation true value used in simulation. Each panel is a combination of standard deviation (columns) and sample size (rows),  color and shape of the points represent the dimension. \label{sciw} }
+% \end{figure}
+\end{column}
+\end{columns}
+\end{alertblock}
+
+\begin{alertblock}{Discussion}
+\begin{enumerate}
+\item $IW$ prior is restrictive, correlations tend to be small when variances are small and also the variances from different components are positive correlated.  
+\item More flexible priors $SIW$ and $HIW_{ht}$ still shows similar characteristics. $BMM_{mu}$ is the most flexible, variances and correlations are independent.
+\item Posterior simulation results shows when the variance is low $IW$ prior underestimate correlation and overestimate variance.
+\item When it is possible to use a HMC sampler $BMM_{mu}$ proposed by \cite{banard2000} gives modeling flexibility and good inferences properties. 
+\item Whenever we use Gibbs base samplers (as JAGS or BUGS) a prior which maintain conjugacy might be preferable such as the scaled inverse Wishart. 
+\item If we are constraint to use $IW$, we may recommend to scale the data first in order to avoid possible biased estimates for correlations.  
+\end{enumerate}
+\end{alertblock}
+
+
+\end{column}
+
+  
+
+
+\end{columns}
+\end{frame}
+\end{document}
+
