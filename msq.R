@@ -99,9 +99,6 @@ weekly.aux<-data.frame(date.lu,week.lu,weekly.aux)
 weekly<-ddply(weekly.aux,.(y,location,week.lu),function(x) apply(x[,-(1:6)],2,sum,na.rm=TRUE))
 
 
-
-
-
 #3) Ploting weekly data
 
 
@@ -205,3 +202,77 @@ qplot(data=mds.summ,t,stress, color=as.factor(conv), facets=d~k )
 # mds1 <- mds.pr3
 # mds2 <- data.frame(msq[,1:2], mds1$points, dist=msq$distout)
 # write.csv(mds2, file='shiny_msq/mdspoints.csv', row.names=FALSE)
+
+# ===================================================
+# Stuff for the poster 
+# set packages we need
+library(vegan)
+library(ggplot2)
+library(reshape2)
+library(plyr)
+library(gridExtra)
+library(shiny)
+library(maps)
+library(ggvis)
+
+# load data sets we use
+#setwd("/Users/nataliadasilva//Documents/mosquito_shine/shiny_msq")
+msq     <- read.csv('shiny_msq/msqdata.csv', header=T)
+msq.res <-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Simpson', 'Shannon', 'Evenness', 'AevexansRatio')]
+msq.long <- read.csv('shiny_msq/msq_long.csv', header=T)
+mean.w<-read.csv('shiny_msq/meanw.csv',header=T)
+mean.w$variable <- with(mean.w, reorder(variable, V1, function(x) -mean(x) ))
+#mdss <- read.csv('shiny_msq/mdss.csv', header=T)
+
+# create yearly proportion for each species (red line) 
+msq.long$subregion <- msq.long$site
+levels(msq.long$subregion) <- c("black hawk", "black hawk", "polk","scott","woodbury","polk","black hawk","scott" )
+msq.spyr <- ddply(.data=msq.long,.variables=c('year','specie'),function(x) data.frame(x , prop.spyr=mean(x$prop.spst)) )
+msq.ind.aux <- melt(msq[,c(1,2,40:46)],id.vars=c('site', 'year'))
+colnames(msq.ind.aux)[3:4] <- c('Index', 'Index.val')
+msq.spyr$pr.up <- msq.spyr$prop.spst>msq.spyr$prop.spyr
+
+# for maps
+ia.c <- map_data('county', 'iowa')
+ia.s <- map_data('state', 'iowa')
+ia2 <- subset(ia.c, subregion %in% unique(msq.long$subregion) )    
+msq.ia <- merge(msq.spyr,ia2, by= 'subregion')
+
+
+# a map for identify locations                
+p <- ggplot() + geom_polygon(data=ia.c, aes(x=long,y=lat,group=group, order=order),colour=I('black'),fill=I('white') )  + 
+       theme_bw() + theme(axis.text=element_blank(), axis.title=element_blank(),
+                       axis.line=element_blank(),
+                       axis.ticks=element_blank(),
+                       panel.border=element_blank(),
+                       panel.grid=element_blank(),
+                       aspect.ratio=1/1.5) 
+pdf('figs/map.iowapdf')
+p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) )
+dev.off()
+
+# An average spcecies composition ...
+d  <- ddply(msq.long, .(specie),summarize, prop=mean(prop.spst) )
+pdf('figs/meanprop.pdf')
+qplot(data=subset(d,prop>.01), x=specie, y=prop)  + scale_y_log10() + 
+  ylab('Proportion (log10 scale)') + theme(axis.text.x = element_text(angle=45, vjust=1))
+dev.off()
+
+# Within species: Vexans and Pippens
+d <- subset(msq.spyr, specie=='Aedes.vexans')
+pdf('figs/vexans.pdf')
+ggplot(data=d, aes(x=year,y=prop.spst),color=site) + geom_point(size=2)+geom_line() + 
+  geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, ncol=4) +
+ scale_x_continuous("Year") +scale_y_continuous("Proportion of specie")
+dev.off()
+
+d <- subset(msq.spyr, specie=='Culex.pipiens.group')
+pdf('figs/pipiens.pdf')
+ggplot(data=d, aes(x=year,y=prop.spst),color=site) + geom_point(size=2)+geom_line() + 
+  geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, ncol=4) +
+  scale_x_continuous("Year") +scale_y_continuous("Proportion of specie")
+dev.off()
+
+# Between Species .... 
+
+
