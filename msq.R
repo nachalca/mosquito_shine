@@ -146,7 +146,7 @@ library(vegan)
 
 # load data sets we use
 #setwd("/Users/nataliadasilva//Documents/mosquito_shine/shiny_msq")
-msq<- read.csv('msqdata.csv', header=T)
+msq<- read.csv('shiny_msq/msqdata.csv', header=T)
 
 msq.sp <- msq[-c(1:2, 39:53)]
 prop <- msq.sp /apply(msq.sp,1,sum, na.rm=T)
@@ -222,7 +222,7 @@ msq.res <-msq[,c('site','year','Abundance','SpeciesRichness','DominanceBP', 'Sim
 msq.long <- read.csv('shiny_msq/msq_long.csv', header=T)
 mean.w<-read.csv('shiny_msq/meanw.csv',header=T)
 mean.w$variable <- with(mean.w, reorder(variable, V1, function(x) -mean(x) ))
-#mdss <- read.csv('shiny_msq/mdss.csv', header=T)
+mdss <- read.csv('shiny_msq/mdss.csv', header=T)
 
 # create yearly proportion for each species (red line) 
 msq.long$subregion <- msq.long$site
@@ -274,5 +274,62 @@ ggplot(data=d, aes(x=year,y=prop.spst),color=site) + geom_point(size=2)+geom_lin
 dev.off()
 
 # Between Species .... 
+
+
+
+# Community level 
+dst <- ddply(mdss, .(d,k,t), summarize, stress= mean(stress))
+
+# mds using horn distance .... 
+
+pdf('figs/strdim.pdf')
+qplot(data=subset(dst,d=='horn' & t==100 & k<6), k,stress,geom=c('point','line'))
+dev.off()
+
+m <- metaMDS(msq.sp, distance='horn',k=2, trymax=100,trace=0,autotransform=F)
+stressplot(m)
+
+pdf('figs/stresshorn.pdf')
+qplot(s$x, s$y, size=I(1),ylab='Ordination distance', xlab='Observed Dissimilarity')
+dev.off()
+
+# Determine mean comunity, distance to the mean and rare communities
+
+mid.comu <- ddply(mdss,.(d,k,t), function(x) apply(x[,-c(1:5)],2,mean,na.rm=T))
+v.dis<-function(dat1){ 
+  n<-dim(dat1)[1]
+  data.frame(distout = as.matrix(vegdist(dat1,method='euclidean',na.rm=T),nrow=n)[-n,n])
+}
+dist.out<-ddply(rbind(mdss[,-c(4:5)],mid.comu),.(d,k,t), v.dis)
+
+dd <- data.frame(scores(m),distout=subset(dist.out, d=='horn' & k==2 &t==100)$distout)
+dd$rare <- dd$distout >= quantile(dd$distout,.9)
+
+pdf('figs/mdsplot.pdf')
+qplot(data=dd, NMDS1, NMDS2,color=rare,size=I(3)) + theme(legend.position='none') + scale_color_manual(values=c('black', 'red'))
+dev.off()
+
+# use RF to clasify communities
+
+rf.dat <- data.frame(msq,rare=as.factor(dd$distout >= quantile(dd$distout,.9) ))
+
+library(randomForest) 
+rf.ind <-  randomForest(rare ~ . , data=rf.dat[,c(40:46,53)], importance=T)
+v <- data.frame(varImpPlot(rf.ind, main='Species and genus indices',type=1))
+v$variable <- reorder(as.factor(rownames(v)),v$MeanDecreaseAccuracy)
+pdf('figs/rfindi.pdf')
+qplot(data=v, MeanDecreaseAccuracy,variable, size=I(4),ylab='',xlab='Mean Decrease Accuracy') + 
+  theme(axis.text.y = element_text(size=rel(2)))
+dev.off()
+
+rf.abi <-  randomForest(rare ~ . , data=rf.dat[,c(1:2,47:53)], importance=T)
+varImpPlot(rf.abi, main='Abiotic factors',type=1)
+
+
+
+
+
+
+
 
 
