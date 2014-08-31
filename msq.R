@@ -276,6 +276,16 @@ dev.off()
 # Between Species .... 
 
 
+d7 <- subset(mean.w, (variable%in% c("Culiseta.inornata","Culex.pipiens.group","Aedes.trivittatus") & (location %in% "PK-Union")) )
+pdf('figs/weekplot.pdf')
+qplot(data=d7, x=week.lu, y=V1, color=variable,size=I(3)) +  geom_line() +  xlab('Week') + ylab('Total count (in log scale)' ) +
+  scale_y_log10() + theme(legend.position='bottom', legend.title=element_blank(),
+                          axis.text.y = element_text(size=rel(1)),
+                          axis.title.y = element_text(size=rel(2)),
+                          axis.text.x = element_text(size=rel(1)),
+                          axis.title.x = element_text(size=rel(2))) 
+dev.off()
+
 
 # Community level 
 dst <- ddply(mdss, .(d,k,t), summarize, stress= mean(stress))
@@ -306,7 +316,8 @@ dd <- data.frame(scores(m),distout=subset(dist.out, d=='horn' & k==2 &t==100)$di
 dd$rare <- dd$distout >= quantile(dd$distout,.9)
 
 pdf('figs/mdsplot.pdf')
-qplot(data=dd, NMDS1, NMDS2,color=rare,size=I(3)) + theme(legend.position='none') + scale_color_manual(values=c('black', 'red'))
+qplot(data=dd, NMDS1, NMDS2,color=rare,size=I(5)) + 
+  theme(legend.position='none', axis.text.x=element_text(size=rel(2)),axis.text.y=element_text(size=rel(2)) ) + scale_color_manual(values=c('black', 'red'))
 dev.off()
 
 # use RF to clasify communities
@@ -319,7 +330,7 @@ v <- data.frame(varImpPlot(rf.ind, main='Species and genus indices',type=1))
 v$variable <- reorder(as.factor(rownames(v)),v$MeanDecreaseAccuracy)
 pdf('figs/rfindi.pdf')
 qplot(data=v, MeanDecreaseAccuracy,variable, size=I(4),ylab='',xlab='Mean Decrease Accuracy') + 
-  theme(axis.text.y = element_text(size=rel(2)))
+  theme(axis.text.y = element_text(size=rel(2)),axis.title.x = element_text(size=rel(2)))
 dev.off()
 
 rf.abi <-  randomForest(rare ~ . , data=rf.dat[,c(1:2,47:53)], importance=T)
