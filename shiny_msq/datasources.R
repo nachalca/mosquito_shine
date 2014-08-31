@@ -79,10 +79,7 @@ v.dis<-function(dat1){
   n<-dim(dat1)[1]
   data.frame(distout = as.matrix(vegdist(dat1,method='euclidean',na.rm=T),nrow=n)[-n,n])
 }
-
 #dat1<-subset(rbind(mdss[,-c(4:5)],mid.comu),d=='euclidean'& t==50&k==2)
-
-
 dist.out<-ddply(rbind(mdss[,-c(4:5)],mid.comu),.(d,k,t), v.dis)
 
 #qplot(data=subset(dist.out,t==100),x= distout,color=d,geom='density',facets=~k)
