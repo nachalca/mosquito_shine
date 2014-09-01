@@ -247,9 +247,25 @@ p <- ggplot() + geom_polygon(data=ia.c, aes(x=long,y=lat,group=group, order=orde
                        panel.border=element_blank(),
                        panel.grid=element_blank(),
                        aspect.ratio=1/1.5) 
+
+# counties where there are data in general and counties where the 8 locations are. 
+ia.c$global <- ia.c$subregion %in% unique(ia.c$subregion)[c(7,14,17,31,52,57,64,77,78,80,82,84,85,90,97)]
+locations <- ddply(msq.ia, .(subregion,site), summarize, 
+                   long=mean(long), 
+                   lat=mean(lat),
+                   order=mean(order)
+                   )
+locations$long2 <- with(locations, long)
+locations$lat2 <- with(locations, lat) + c(-.18,0,.12, -.15,.15, -.15,.15,0)
+
 pdf('figs/map.iowapdf')
-p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) )
+p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + 
+  geom_polygon(data=subset(ia.c,global), aes(x=long,y=lat,group=group,order=order),fill=I('grey') ) +
+  geom_text(data=locations, aes(x=long2, y=lat2,label=site ),size=I(6), color=I('red'))
 dev.off()
+
+
+
 
 # An average spcecies composition ...
 d  <- ddply(msq.long, .(specie),summarize, prop=mean(prop.spst) )
@@ -286,14 +302,17 @@ qplot(data=d7, x=week.lu, y=V1, color=variable,size=I(3)) +  geom_line() +  xlab
                           axis.title.x = element_text(size=rel(2))) 
 dev.off()
 
-
 # Community level 
 dst <- ddply(mdss, .(d,k,t), summarize, stress= mean(stress))
 
 # mds using horn distance .... 
 
 pdf('figs/strdim.pdf')
-qplot(data=subset(dst,d=='horn' & t==100 & k<6), k,stress,geom=c('point','line'))
+qplot(data=subset(dst,d=='horn' & t==100 & k<6), k,stress,size=I(5))+geom_line() + 
+  xlab('Dimension') + theme(axis.text.y = element_text(size=rel(1)),
+                            axis.title.y = element_text(size=rel(2)),
+                            axis.text.x = element_text(size=rel(1)),
+                            axis.title.x = element_text(size=rel(2))) 
 dev.off()
 
 m <- metaMDS(msq.sp, distance='horn',k=2, trymax=100,trace=0,autotransform=F)
@@ -337,6 +356,8 @@ rf.abi <-  randomForest(rare ~ . , data=rf.dat[,c(1:2,47:53)], importance=T)
 varImpPlot(rf.abi, main='Abiotic factors',type=1)
 
 
+
+# Ilustrate shiny interaction ..... 
 
 
 
