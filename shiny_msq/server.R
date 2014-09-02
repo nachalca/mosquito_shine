@@ -35,6 +35,7 @@ shinyServer(
     
     # data for plot 6
     d6  <- reactive({ subset(msq.geno, (geno %in%input$geno) & (site%in%input$site6)) })
+    
     d7  <-reactive({subset(mean.w,(variable%in%input$specie7)&(location%in%input$site7))})
     
     
@@ -49,7 +50,7 @@ shinyServer(
         
     #==============================================
     output$plot_rf <- reactivePlot(function() {    
-    varImpPlot(rf(), n.var=10, main='Variable importance for predicting Rare occurrence') 
+    varImpPlot(rf(), n.var=10, main='Random Forest variable importance for predicting Rare occurrence') 
     })
     
   output$plot1 <- reactivePlot(function() {    
@@ -122,11 +123,11 @@ output$plot6 <- reactivePlot(function() {
 })
  
 output$plot7 <- reactivePlot(function() {    
-  
-  print(qplot(data=d7(), x=week.lu, y=V1, color=variable, geom=c('point','line'), facets=~location) + scale_y_log10() )
+ 
+ 
+  print(qplot(data=d7(), x=week.lu, y=V1, color=variable, geom=c('point','line'), facets=location~.) + scale_y_log10("Mosquito count")+ scale_x_continuous("Week of the year")  )
 
-#  print( ggplot(data=d7(), aes(x=week.lu,y=V1))+geom_line() +facet_wrap(facets=~location)
-#         + scale_x_continuous("Week") +scale_y_continuous("Mosquito count"))+scale_y_log10()
+
 })
 
 })

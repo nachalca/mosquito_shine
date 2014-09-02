@@ -60,11 +60,11 @@ lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon" 
 cap1 <-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
 cap1.1 <- 'Where Prop is the proportion of a species across all the years, Max.prop is the maximum proportion across all the years
 and Sum.above is the total of years with a proportion above the mean'
-cap4 <-'The right panel shows the density of the distance to the mean community, the red line is the quatile.
+cap4 <-'The right panel shows the density of the distance to the mean community, the red line is the quantile.
         In the left panel each point is a site-year and the red points are the extreme communities.'
 cap5<-'MDS for communities'
 cap6 <- 'Compare mosquito species across all years for several sites'
-cap7 <- 'Weekly count in logs for several sites'
+cap7 <- 'Mosquito weekly count (plot in log scale)'
 
 #density plot for rare communities id
 msq.sp <- colnames(msq)[-c(1:2, 39:52)]
@@ -149,3 +149,8 @@ env <- colnames(msq)[c(39:52)]
 # varImpPlot(rf.cont , n.var=10, main='Variable importance for predicting Rare occurrence')
 # 
 # data.frame(round(cor(rf.dat[,-c(1,18)]),2)) 
+
+
+
+###Multiplot
+
