@@ -316,7 +316,7 @@ qplot(data=subset(dst,d=='horn' & t==100 & k<6), k,stress,size=I(7))+geom_line()
 dev.off()
 
 m <- metaMDS(msq.sp, distance='horn',k=2, trymax=100,trace=0,autotransform=F)
-stressplot(m)
+s <- stressplot(m)
 
 pdf('figs/stresshorn.pdf')
 qplot(s$x, s$y, size=I(1),ylab='Ordination distance', xlab='Observed Dissimilarity')
@@ -355,7 +355,6 @@ dev.off()
 rf.abi <-  randomForest(rare ~ . , data=rf.dat[,c(1:2,47:53)], importance=T)
 varImpPlot(rf.abi, main='Abiotic factors',type=1)
 
-
 # Ilustrate shiny interaction ..... 
 ddd <- data.frame(msq, rare = dd$distout >= quantile(dd$distout,.9))
 pdf('figs/interactive.pdf')
@@ -364,6 +363,23 @@ qplot(data=ddd, x=DominanceBP,y=DegreeDayMinus2,color=rare,size=I(5)) + scale_co
         axis.text.x = element_text(size=rel(1)),axis.title.x = element_text(size=rel(2))) 
 dev.off()
 
+# table comparing rare and common communities
+msq$rare <- dd$distout >= quantile(dd$distout,.9)
+with(msq, table(site, rare))
+
+ddd <- melt(msq[,c("Aedes.vexans","Culex.pipiens.group","Abundance" ,"SpeciesRichness","DegreeDayMinus2","PrecipationMinus2",'rare')], id='rare')
+
+comparando <- function(xx) {
+  rare <-  with(xx, variable[rare])
+  common <-with(xx, variable[!rare])
+  tt <- t.test(rare,common)
+  #out <- 
+    data.frame(c(tt$estimate,tt$p.value))
+  #rownames(out) <-c('rare','common','pval')
+  #return(out)
+}
+
+aux<- ddply(ddd, .(variable), comparando)
 
 
 

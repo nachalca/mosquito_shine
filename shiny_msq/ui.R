@@ -15,7 +15,7 @@ shinyUI(bootstrapPage(
                      selectInput(inputId = "specie",
                             label = "Select specie:",
                             choices = levels(msq.long$specie),selected='Aedes.vexans'),
-     
+                 
                     checkboxGroupInput(inputId = "site",
                             label = "Select site:",
                             choices = levels(msq.long$site),selected='Cfall')
@@ -34,7 +34,7 @@ shinyUI(bootstrapPage(
                                        min=50, max=100, value=90,step=1),
                            selectInput(inputId = "k4",
                                        label = "Select dimension:",
-                                       choices = c("2", "3",'4','5','6','7','8','9','10'), 
+                                       choices = c("2", "3",'4','5'), 
                                        selected="2"),
                            
                            selectInput(inputId = "s4",
@@ -45,7 +45,8 @@ shinyUI(bootstrapPage(
                            selectInput(inputId = "dist4",
                                        label = "Select distance:",
                                        choices = c("euclidean", "canberra", "bray","jaccard","horn"), 
-                                       selected="horn"),   
+                                       selected="horn"),
+          
             selectInput(inputId = "index.X",
                          label = "Select x axis variable",
                          choices = lab.index,selected='PrecipationExact'),
@@ -67,7 +68,7 @@ shinyUI(bootstrapPage(
                          
                          selectInput(inputId = "k5",
                                      label = "Select dimension:",
-                                     choices = c("2", "3",'4','5','6','7','8','9','10'), 
+                                     choices = c("2", "3",'4','5'), 
                                      selected="2"),
                          
                          selectInput(inputId = "s5",
@@ -111,9 +112,9 @@ shinyUI(bootstrapPage(
             tabPanel("Species-site",p(cap1), plotOutput("plot1"),tableOutput("tab1"),p(cap1.1),value=1),    
             tabPanel("Genotype-site",p(cap6), plotOutput("plot6"),value=6),
             #tabPanel("Location", plotOutput("plot2"),value=2), 
-            tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"), plotOutput('plot_rf'),value=4),
             tabPanel("MDS",p(cap5), ggvisOutput("my_plot"),value=5),  
-            id="conditionedPanels" )
+            tabPanel("Rare Comunities", p(cap4),plotOutput("plot4"), plotOutput('plot_rf'),value=4),
+              id="conditionedPanels" )
         
             ) # close mainPanel
     
