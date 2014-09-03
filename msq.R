@@ -367,19 +367,18 @@ dev.off()
 msq$rare <- dd$distout >= quantile(dd$distout,.9)
 with(msq, table(site, rare))
 
-ddd <- melt(msq[,c("Aedes.vexans","Culex.pipiens.group","Abundance" ,"SpeciesRichness","DegreeDayMinus2","PrecipationMinus2",'rare')], id='rare')
+ddd <- melt(msq[,c("Aedes.vexans","Culex.pipiens.group","Abundance" ,"Shannon","DegreeDayMinus2","PrecipationMinus2",'rare')], id='rare')
 
 comparando <- function(xx) {
-  rare <-  with(xx, variable[rare])
-  common <-with(xx, variable[!rare])
+  rare <-  with(xx, value[rare])
+  common <-with(xx, value[!rare])
   tt <- t.test(rare,common)
-  #out <- 
-    data.frame(c(tt$estimate,tt$p.value))
-  #rownames(out) <-c('rare','common','pval')
-  #return(out)
+  out <- data.frame( t(c(tt$estimate,round(tt$p.value,4) )))
+  colnames(out) <-c('rare','common','pval')
+  return(out)
 }
 
-aux<- ddply(ddd, .(variable), comparando)
+ddply(ddd, .(variable), comparando)
 
 
 
