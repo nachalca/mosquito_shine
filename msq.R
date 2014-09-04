@@ -258,7 +258,7 @@ locations <- ddply(msq.ia, .(subregion,site), summarize,
 locations$long2 <- with(locations, long)
 locations$lat2 <- with(locations, lat) + c(-.18,0,.12, -.15,.15, -.15,.15,0)
 
-pdf('figs/map.iowapdf')
+pdf('figs/mapiowa.pdf')
 p + geom_path(data=ia.s, aes(x=long, y=lat, group=group) ) + 
   geom_polygon(data=subset(ia.c,global), aes(x=long,y=lat,group=group,order=order),fill=I('grey') ) +
   geom_text(data=locations, aes(x=long2, y=lat2,label=site ),size=I(6), color=I('red'))
@@ -270,21 +270,21 @@ dev.off()
 # An average spcecies composition ...
 d  <- ddply(msq.long, .(specie),summarize, prop=mean(prop.spst) )
 pdf('figs/meanprop.pdf')
-qplot(data=subset(d,prop>.01), x=specie, y=prop)  + scale_y_log10() + 
+qplot(data=subset(d,prop>.01), x=specie, y=prop,size=I(5))  + scale_y_log10() + 
   ylab('Proportion (log10 scale)') + theme(axis.text.x = element_text(angle=45, vjust=1))
 dev.off()
 
 # Within species: Vexans and Pippens
 d <- subset(msq.spyr, specie=='Aedes.vexans')
 pdf('figs/vexans.pdf')
-ggplot(data=d, aes(x=year,y=prop.spst),color=site) + geom_point(size=2)+geom_line() + 
+ggplot(data=d, aes(x=year,y=prop.spst),size=I(5),color=site) + geom_point(size=2)+geom_line() + 
   geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, ncol=4) +
  scale_x_continuous("Year") +scale_y_continuous("Proportion of specie")
 dev.off()
 
 d <- subset(msq.spyr, specie=='Culex.pipiens.group')
 pdf('figs/pipiens.pdf')
-ggplot(data=d, aes(x=year,y=prop.spst),color=site) + geom_point(size=2)+geom_line() + 
+ggplot(data=d, aes(x=year,y=prop.spst),size=I(5),color=site) + geom_point(size=2)+geom_line() + 
   geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, ncol=4) +
   scale_x_continuous("Year") +scale_y_continuous("Proportion of specie")
 dev.off()
@@ -294,7 +294,7 @@ dev.off()
 
 d7 <- subset(mean.w, (variable%in% c("Culiseta.inornata","Culex.pipiens.group","Aedes.trivittatus") & (location %in% "PK-Union")) )
 pdf('figs/weekplot.pdf')
-qplot(data=d7, x=week.lu, y=V1, color=variable,size=I(3)) +  geom_line() +  xlab('Week') + ylab('Total count (in log scale)' ) +
+qplot(data=d7, x=week.lu, y=V1, color=variable,size=I(5)) +  geom_line() +  xlab('Week') + ylab('Total count (in log scale)' ) +
   scale_y_log10() + theme(legend.position='bottom', legend.title=element_blank(),
                           axis.text.y = element_text(size=rel(1)),
                           axis.title.y = element_text(size=rel(2)),
@@ -308,7 +308,7 @@ dst <- ddply(mdss, .(d,k,t), summarize, stress= mean(stress))
 # mds using horn distance .... 
 
 pdf('figs/strdim.pdf')
-qplot(data=subset(dst,d=='horn' & t==100 & k<6), k,stress,size=I(5))+geom_line() + 
+qplot(data=subset(dst,d=='horn' & t==100 & k<6), k,stress,size=I(7))+geom_line() + 
   xlab('Dimension') + theme(axis.text.y = element_text(size=rel(1)),
                             axis.title.y = element_text(size=rel(2)),
                             axis.text.x = element_text(size=rel(1)),
@@ -348,31 +348,37 @@ rf.ind <-  randomForest(rare ~ . , data=rf.dat[,c(40:46,53)], importance=T)
 v <- data.frame(varImpPlot(rf.ind, main='Species and genus indices',type=1))
 v$variable <- reorder(as.factor(rownames(v)),v$MeanDecreaseAccuracy)
 pdf('figs/rfindi.pdf')
-qplot(data=v, MeanDecreaseAccuracy,variable, size=I(4),ylab='',xlab='Mean Decrease Accuracy') + 
+qplot(data=v, MeanDecreaseAccuracy,variable, size=I(6),ylab='',xlab='Mean Decrease Accuracy') + 
   theme(axis.text.y = element_text(size=rel(2)),axis.title.x = element_text(size=rel(2)))
 dev.off()
 
 rf.abi <-  randomForest(rare ~ . , data=rf.dat[,c(1:2,47:53)], importance=T)
 varImpPlot(rf.abi, main='Abiotic factors',type=1)
 
-# table comparing rare and common communities
+# Ilustrate shiny interaction ..... 
+ddd <- data.frame(msq, rare = dd$distout >= quantile(dd$distout,.9))
+pdf('figs/interactive.pdf')
+qplot(data=ddd, x=DominanceBP,y=DegreeDayMinus2,color=rare,size=I(5)) + scale_color_manual(values=c('black', 'red')) +
+  theme(legend.position='none', axis.text.y = element_text(size=rel(1)),axis.title.y = element_text(size=rel(2)),
+        axis.text.x = element_text(size=rel(1)),axis.title.x = element_text(size=rel(2))) 
+dev.off()
 
+# table comparing rare and common communities
 msq$rare <- dd$distout >= quantile(dd$distout,.9)
 with(msq, table(site, rare))
 
-ddd <- melt(msq[,c("Aedes.vexans","Culex.pipiens.group","Abundance" ,"SpeciesRichness","DegreeDayMinus2","PrecipationMinus2",'rare')], id='rare')
+ddd <- melt(msq[,c("Aedes.vexans","Culex.pipiens.group","Abundance" ,"Shannon","DegreeDayMinus2","PrecipationMinus2",'rare')], id='rare')
 
 comparando <- function(xx) {
-  rare <-  with(xx, variable[rare])
-  common <-with(xx, variable[!rare])
+  rare <-  with(xx, value[rare])
+  common <-with(xx, value[!rare])
   tt <- t.test(rare,common)
-  #out <- 
-    data.frame(c(tt$estimate,tt$p.value))
-  #rownames(out) <-c('rare','common','pval')
-  #return(out)
+  out <- data.frame( t(c(tt$estimate,round(tt$p.value,4) )))
+  colnames(out) <-c('rare','common','pval')
+  return(out)
 }
 
-aux<- ddply(ddd, .(variable), comparando)
+ddply(ddd, .(variable), comparando)
 
 
 
