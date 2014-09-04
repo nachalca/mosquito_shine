@@ -1,0 +1,41 @@
+\documentclass[9pt]{beamer}
+
+\usepackage{mathptmx}
+\usepackage{beamerthemesplit}
+\useinnertheme{circles,rounded}
+
+\definecolor{uofsgreen}{RGB}{46,139,87}
+\usecolortheme[named=uofsgreen]{structure}
+
+
+\author{Iowa State University
+}
+
+\title{Twenty-Year Ecological Analysis of Adult Mosquito Communities in Iowa}
+
+\author[Ignacio Alvarez \and Natalia da Silva \and Mike Dunbar]{\includegraphics[height=1cm,width=2cm]{huddle}\\Ignacio Alvarez & Natalia da Silva & Mike Dunbar}
+\institute[Inst.]{Iowa State University}
+\date{\today}
+\begin{document}
+ \frame{\titlepage}
+
+\begin{frame}
+
+\textbf{Goals}:
+\begin{itemize}
+\item Characterize mosquito population dynamics and interactions over the course of 2 decades.
+\item Identify rare communities base on ecological measures.
+\item Design a friendly interactive  tool to analyze the data.
+\end{itemize}
+\end{frame}
+
+
+\section{Shiny App}
+\begin{frame}
+\frametitle{Shine mosquito shine!!}
+
+Web application using shiny package in R to help entomologist to visualize summarize and analyze the data produced by the survellance program.
+https://natydasilva.shinyapps.io/shiny_msq/
+\end{frame}
+
+\end{document}
