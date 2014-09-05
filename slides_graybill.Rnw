@@ -3,39 +3,49 @@
 \usepackage{mathptmx}
 \usepackage{beamerthemesplit}
 \useinnertheme{circles,rounded}
-
+\usepackage{url}
 \definecolor{uofsgreen}{RGB}{46,139,87}
 \usecolortheme[named=uofsgreen]{structure}
+\parskip 5mm
 
-
-\author{Iowa State University
-}
+%\author{Iowa State University}
 
 \title{Twenty-Year Ecological Analysis of Adult Mosquito Communities in Iowa}
+\author{Ignacio Alvarez \inst{1} \and Natalia da Silva \inst{1} \and Mike Dunbar \inst{2} } 
+\institute[Inst]{\inst{1} Department of Statistics, Iowa State University \and 
+\inst{2} Department of Entomology, Iowa State University}
 
-\author[Ignacio Alvarez \and Natalia da Silva \and Mike Dunbar]{\includegraphics[height=1cm,width=2cm]{huddle}\\Ignacio Alvarez & Natalia da Silva & Mike Dunbar}
-\institute[Inst.]{Iowa State University}
-\date{\today}
+\date{September 2014}
+
 \begin{document}
  \frame{\titlepage}
 
 \begin{frame}
+\frametitle{Twenty-Year Ecological Analysis of Adult Mosquito Communities in Iowa}
+
+\textbf{Motivation}:
+\begin{itemize}
+\item Aedes vexans is the most frequently captured mosquito in Iowa.  
+\item Culex pipiens group mosquitoes are considered primary vectors of West Nile virus in the north-central United States.
+\end{itemize}
 
 \textbf{Goals}:
 \begin{itemize}
 \item Characterize mosquito population dynamics and interactions over the course of 2 decades.
 \item Identify rare communities base on ecological measures.
-\item Design a friendly interactive  tool to analyze the data.
+\item Design a friendly interactive  tool to analyze the data. We use {\tt shiny} package in R \url{https://natydasilva.shinyapps.io/shiny_msq/}
 \end{itemize}
 \end{frame}
 
-
-\section{Shiny App}
 \begin{frame}
-\frametitle{Shine mosquito shine!!}
+\frametitle{Twenty-Year Ecological Analysis of Adult Mosquito Communities in Iowa}
 
-Web application using shiny package in R to help entomologist to visualize summarize and analyze the data produced by the survellance program.
-https://natydasilva.shinyapps.io/shiny_msq/
+Stop by our poster to see our findings 
+
+
+Check out the shiny app ! 
+
+\url{https://natydasilva.shinyapps.io/shiny_msq/}
 \end{frame}
 
 \end{document}
