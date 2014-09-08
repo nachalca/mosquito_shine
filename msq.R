@@ -344,9 +344,13 @@ dev.off()
 rf.dat <- data.frame(msq,rare=as.factor(dd$distout >= quantile(dd$distout,.9) ))
 
 library(randomForest) 
-rf.ind <-  randomForest(rare ~ . , data=rf.dat[,c(40:46,53)], importance=T)
-v <- data.frame(varImpPlot(rf.ind, main='Species and genus indices',type=1))
+rf.ind <-  randomForest(rare ~ . , data=rf.dat, importance=T)
+
+#v <- data.frame(varImpPlot(rf.ind, main='Species and genus indices',type=1))
+v <- data.frame(importance(rf.ind, main='Species and genus indices',type=1))
+
 v$variable <- reorder(as.factor(rownames(v)),v$MeanDecreaseAccuracy)
+
 pdf('figs/rfindi.pdf')
 qplot(data=v, MeanDecreaseAccuracy,variable, size=I(6),ylab='',xlab='Mean Decrease Accuracy') + 
   theme(axis.text.y = element_text(size=rel(2)),axis.title.x = element_text(size=rel(2)))
@@ -367,7 +371,7 @@ dev.off()
 msq$rare <- dd$distout >= quantile(dd$distout,.9)
 with(msq, table(site, rare))
 
-ddd <- melt(msq[,c("Aedes.vexans","Culex.pipiens.group","Abundance" ,"Shannon","DegreeDayMinus2","PrecipationMinus2",'rare')], id='rare')
+ddd <- melt(msq[,c("Aedes.vexans","Culex.pipiens.group","DominanceBP" ,"Simpson","DegreeDayMinus2","PrecipationMinus2",'rare')], id='rare')
 
 comparando <- function(xx) {
   rare <-  with(xx, value[rare])

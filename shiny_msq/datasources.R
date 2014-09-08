@@ -55,8 +55,9 @@ ia2 <- subset(ia.c, subregion %in% unique(msq.long$subregion) )
 msq.ia <- merge(msq.spyr,ia2, by= 'subregion')
 
 # only for UI
-lab.index<-c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon"  , "Evenness","AevexansRatio","DegreeDayExact",
-"PrecipationExact" ,"DegreeDayMinus2","PrecipationMinus2")
+lab.index <- colnames(msq)
+  #c("Abundance","SpeciesRichness", "DominanceBP","Simpson",  "Shannon"  , "Evenness","AevexansRatio","DegreeDayExact","PrecipationExact" ,"DegreeDayMinus2","PrecipationMinus2")
+
 cap1 <-'Yearly species proportion per site. The red line represents the mean proportion for each species across sites'
 cap1.1 <- 'Where Prop is the proportion of a species across all the years, Max.prop is the maximum proportion across all the years
 and Sum.above is the total of years with a proportion above the mean'

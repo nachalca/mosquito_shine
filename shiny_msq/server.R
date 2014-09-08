@@ -46,12 +46,25 @@ shinyServer(
     # rf.dat<-merge(rf.dat,rf.geno,by=c('site','year'))
     # rf.dat$rare<-as.factor(rf.dat$rare)
     library(randomForest) 
+    
     rf <- reactive({ randomForest(rare ~ . , data=rf.dat(), importance=T) })
         
     #==============================================
     output$plot_rf <- reactivePlot(function() {    
-    varImpPlot(rf(), n.var=10, main='Random Forest variable importance for predicting Rare occurrence') 
-    })
+      # varImpPlot(rf(), n.var=10, main='Random Forest variable importance for predicting Rare occurrence') 
+      
+    v <- reactive({ data.frame(importance(rf(), main='Species and genus indices',type=1)) })
+#    v1 <-reactive({data.frame(v(), variable = as.factor(rownames(v()))  )  })
+
+    v1 <-reactive({data.frame(v(), variable = reorder(as.factor(rownames(v())), with(v(), MeanDecreaseAccuracy) ))})    
+
+    v2 <- reactive({ v1() [ with(v1(), order(MeanDecreaseAccuracy, decreasing=T) ),  ]    })
+
+      print( 
+        qplot(data=v2()[1:10,], MeanDecreaseAccuracy,variable,main='Random Forest variable importance for predicting rare communities', ylab='',xlab='Mean Decrease Accuracy') 
+               +theme(axis.text.y = element_text(size=rel(2)),axis.title.x = element_text(size=rel(2)))
+             )
+     })
     
   output$plot1 <- reactivePlot(function() {    
     print( ggplot(data=d1(), aes(x=year,y=prop.spst),color=site)+geom_point(size=4)+geom_line()+geom_line(aes(x=year,y=prop.spyr), color=I('red')) +facet_wrap(facets=~site, scales='free')
